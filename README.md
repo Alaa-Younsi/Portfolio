@@ -1,2 +1,2 @@
-### Learning Javascript
-# My Javascript learning journey
+# Learning Javascript
+## My Javascript learning journey
