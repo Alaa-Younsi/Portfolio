@@ -1,0 +1,179 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: black;
+}
+
+@keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 #ff00ff, -0.05em -0.025em 0 #00ffff;
+    transform: translate(0);
+  }
+  14% {
+    text-shadow: 0.05em 0 0 #ff00ff, -0.05em -0.025em 0 #00ffff;
+  }
+  15% {
+    text-shadow: -0.05em -0.025em 0 #ff00ff, 0.025em 0.025em 0 #00ffff;
+  }
+  49% {
+    text-shadow: -0.05em -0.025em 0 #ff00ff, 0.025em 0.025em 0 #00ffff;
+  }
+  50% {
+    text-shadow: 0.025em 0.05em 0 #ff00ff, 0.05em 0 0 #00ffff;
+  }
+  99% {
+    text-shadow: 0.025em 0.05em 0 #ff00ff, 0.05em 0 0 #00ffff;
+  }
+  100% {
+    text-shadow: -0.025em 0 0 #ff00ff, -0.025em -0.025em 0 #00ffff;
+  }
+}
+
+@keyframes glitch-2 {
+  0% {
+    text-shadow: 0.05em 0 0 #ff00ff, -0.05em -0.025em 0 #00ffff;
+  }
+  33% {
+    text-shadow: 0.025em 0.05em 0 #ff00ff, 0.05em 0 0 #00ffff;
+  }
+  66% {
+    text-shadow: -0.05em -0.025em 0 #ff00ff, 0.025em 0.025em 0 #00ffff;
+  }
+  100% {
+    text-shadow: 0.025em 0.05em 0 #ff00ff, 0.05em 0 0 #00ffff;
+  }
+}
+
+.glitch-text {
+  position: relative;
+  animation: glitch 3s infinite;
+}
+
+.glitch-text:hover {
+  animation: glitch-2 0.3s infinite;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.glitch-text::before {
+  animation: glitch-2 0.3s infinite;
+  color: #ff00ff;
+  z-index: -1;
+}
+
+.glitch-text::after {
+  animation: glitch 3s infinite reverse;
+  color: #00ffff;
+  z-index: -2;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fadeOut {
+  animation: fadeOut 2s forwards;
+}
+
+.animate-fadeOutSlow {
+  animation: fadeOut 2.35s forwards;
+}
+
+
+/* Add glow effect to frame */
+canvas::after {
+  content: '';
+  position: fixed;
+  top: 5%;
+  left: 2.5%;
+  width: 95%;
+  height: 90%;
+  box-shadow: 
+    0 0 60px 30px rgba(255, 255, 255, 0.05),
+    0 0 100px 60px rgba(255, 255, 255, 0.03),
+    inset 0 0 100px 50px rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+  z-index: -5;
+  border-radius: 2px;
+}
+
+/* Set coding font globally */
+body {
+  background-color: black;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Source Code Pro', monospace;
+  font-weight: 400;
+}
+
+/* Optional: Different weights for different elements */
+.font-light {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-weight: 300;
+}
+
+.font-normal {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-weight: 400;
+}
+
+.font-bold {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-weight: 700;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  /* Reduce animation intensity on mobile for performance */
+  .glitch-text {
+    animation-duration: 5s;
+  }
+  
+  /* Increase touch targets */
+  button, a {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Better text readability on small screens */
+  p, span {
+    line-height: 1.4;
+  }
+}
+
+
+/* Smooth transitions */
+* {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Performance optimizations */
+canvas {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* Hide scrollbar but keep functionality */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Prevent text overflow */
+.truncate-multiline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
