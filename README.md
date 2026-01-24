@@ -1,4 +1,4 @@
-[Alaa Younsi] aka Infinituxsqsdfsdfsqfsqfqsdfqsdfsqdfsqdfqsdf
+[Alaa Younsi] aka Infinituxsqsdfsdfsqfsqfqsdfqsdfsqdfsqdfqsdfqsdf
 
 Personal portfolio website built with React, Vite, and Tailwind CSS.
 
