@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
 body {
   background-color: black;
 }
@@ -46,6 +56,21 @@ body {
   }
 }
 
+@keyframes blink-cursor {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink {
+  animation: blink-cursor 1s infinite;
+  font-weight: 100;
+  margin-left: 2px;
+}
+
 .glitch-text {
   position: relative;
   animation: glitch 3s infinite;
@@ -63,18 +88,23 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
+  pointer-events: none;
 }
 
 .glitch-text::before {
   animation: glitch-2 0.3s infinite;
   color: #ff00ff;
   z-index: -1;
+  opacity: 0.8;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
 }
 
 .glitch-text::after {
   animation: glitch 3s infinite reverse;
   color: #00ffff;
   z-index: -2;
+  opacity: 0.8;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
 }
 
 @keyframes fadeOut {

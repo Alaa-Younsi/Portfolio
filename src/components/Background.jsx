@@ -130,17 +130,16 @@ export default function Background({ isDarkMode = true }) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const computed = getComputedStyle(canvas);
-    const frameX = parseFloat(computed.getPropertyValue("--frame-x")) || 0;
-    const frameY = parseFloat(computed.getPropertyValue("--frame-y")) || 0;
-    if (frameX > 0 && frameY > 0) {
-      frameBoundsRef.current = {
-        top: frameY / window.innerHeight,
-        bottom: 1 - frameY / window.innerHeight,
-        left: frameX / window.innerWidth,
-        right: 1 - frameX / window.innerWidth,
-      };
-    }
+    // Calculate actual frame positions from viewport
+    const actualFrameX = Math.max(12, Math.min(window.innerWidth * 0.025, 32));
+    const actualFrameY = Math.max(16, Math.min(window.innerHeight * 0.05, 48));
+
+    frameBoundsRef.current = {
+      top: actualFrameY / window.innerHeight,
+      bottom: 1 - actualFrameY / window.innerHeight,
+      left: actualFrameX / window.innerWidth,
+      right: 1 - actualFrameX / window.innerWidth,
+    };
 
     scaleRef.current = window.devicePixelRatio || 1;
     widthRef.current = window.innerWidth * scaleRef.current;
@@ -315,7 +314,7 @@ export default function Background({ isDarkMode = true }) {
         width: '100%',
         height: '100%',
         zIndex: 0,
-        pointerEvents: 'auto', // Ensure it's interactive
+        pointerEvents: 'auto',
         backgroundColor: isDarkMode ? "#000" : "#fff",
       }}
     />
