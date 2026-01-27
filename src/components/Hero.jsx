@@ -24,7 +24,7 @@ export default function Hero({ active }) { // Renamed from Home to Hero for clar
   const [currentCharIndex, setCurrentCharIndex] = useState(0)
 
   useEffect(() => {
-    if (!active || active !== "home") return
+    if (active !== "home") return
     if (currentLineIndex >= lines.length) return
 
     const currentLine = lines[currentLineIndex]

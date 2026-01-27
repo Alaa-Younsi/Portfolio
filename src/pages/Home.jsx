@@ -58,10 +58,10 @@ export default function HomePage() {
       
       {/* UI Components */}
       <Header active={active} setActive={setActive} />
-      <Hero key={homeClickCount} active={active} />
-      <About key={aboutClickCount} active={active} />
+      {active === "home" && <Hero key={homeClickCount} active={active} />}
+      {active === "info" && <About key={aboutClickCount} active={active} />}
       <Skills active={active} />
-      <Projects key={projectsClickCount} active={active} />
+      {active === "projects" && <Projects key={projectsClickCount} active={active} />}
       <Contact active={active} />
     </div>
   );
