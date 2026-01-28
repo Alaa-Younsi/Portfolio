@@ -62,7 +62,7 @@ export default function HomePage() {
       {active === "info" && <About key={aboutClickCount} active={active} />}
       <Skills active={active} />
       {active === "projects" && <Projects key={projectsClickCount} active={active} />}
-      <Contact active={active} />
+      {active === "contact" && <Contact active={active} />}
     </div>
   );
 }

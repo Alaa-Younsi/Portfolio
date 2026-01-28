@@ -14,9 +14,9 @@ export default function Info({ active }) {
   const titleString = '\u25a0 Things that i can do'
   const descString = 'I can do website development and design, including server side services.'
   const frontEndLabelString = '\u25cf Front-end skillset'
-  const frontEndSkillsString = 'HTML, CSS, JS, React, Tailwind'
+  const frontEndSkillsString = 'JavaScript, Typescript, React, Tailwind, Vite, NextJS..'
   const backEndLabelString = '\u25cf Back-end skillset'
-  const backEndSkillsString = 'Python, PHP, NodeJS, Firebase'
+  const backEndSkillsString = 'Python, MySQL, NodeJS, ExpressJS, Firebase, Vercel..'
   const link1String = 'Instagram\u2197'
   const link2String = 'Twitter\u2197'
 
@@ -182,14 +182,14 @@ export default function Info({ active }) {
       {currentStep >= 6 && (
         <div className="absolute bottom-[var(--content-y)] right-[var(--content-x)] text-[var(--fg)] space-y-2 text-right">
           {link1Text && (
-            <a href="https://www.instagram.com/syrexl7/" target="_blank" 
+            <a href="https://www.instagram.com/infinituxs/" target="_blank" 
                className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity glitch-text" data-text={link1Text}>
               {link1Text}
               {link1Text.length < link1String.length && currentStep === 6 && <span className="cursor-blink">|</span>}
             </a>
           )}
           {currentStep >= 7 && link2Text && (
-            <a href="https://x.com/syrexl7" target="_blank" 
+            <a href="https://x.com/ashv3il" target="_blank" 
                className="block text-xs sm:text-sm hover:opacity-50 transition-opacity glitch-text" data-text={link2Text}>
               {link2Text}
               {link2Text.length < link2String.length && currentStep === 7 && <span className="cursor-blink">|</span>}

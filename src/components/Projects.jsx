@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 
 export default function Projects({ active }) {
   const [titleText, setTitleText] = useState('')
-  const [showProjects, setShowProjects] = useState(false)
   const [project1Text, setProject1Text] = useState('')
   const [project1Title, setProject1Title] = useState('')
   const [project2Text, setProject2Text] = useState('')
@@ -11,17 +10,21 @@ export default function Projects({ active }) {
   const [project3Title, setProject3Title] = useState('')
   const [project4Text, setProject4Text] = useState('')
   const [project4Title, setProject4Title] = useState('')
+  const [project5Text, setProject5Text] = useState('')
+  const [project5Title, setProject5Title] = useState('')
   const [currentStep, setCurrentStep] = useState(0)
 
   const titleString = '■ Development & Design Projects'
-  const p1TextString = '2026 / Comission / Agency'
-  const p1TitleString = 'MYB Agency'
-  const p2TextString = '2025 / Comission / Online Store'
-  const p2TitleString = 'Northernwest'
-  const p3TextString = '2023 / Commission / Agency'
-  const p3TitleString = 'WebSync Media'
-  const p4TextString = '2023 / Commission / Portfolio'
-  const p4TitleString = 'Marlowe'
+  const p1TextString = '2026 / Personal / Playground'
+  const p1TitleString = 'CPlayground'
+  const p2TextString = '2026 / Comission / Agency'
+  const p2TitleString = 'MYB Agency'
+  const p3TextString = '2025 / Comission / Online Store'
+  const p3TitleString = 'Northernwest'
+  const p4TextString = '2024 / Personal / Agency'
+  const p4TitleString = 'WebSync Media'
+  const p5TextString = '2023 / Personal / Portfolio'
+  const p5TitleString = 'Marlowe'
 
   useEffect(() => {
     if (active !== "projects") return
@@ -39,9 +42,8 @@ export default function Projects({ active }) {
       }
     }
 
-    // Step 1: Show projects container and type project 1 text
+    // Step 1: Type project 1 text
     if (currentStep === 1) {
-      setShowProjects(true)
       if (project1Text.length < p1TextString.length) {
         const timer = setTimeout(() => {
           setProject1Text(p1TextString.slice(0, project1Text.length + 1))
@@ -138,9 +140,35 @@ export default function Projects({ active }) {
           setProject4Title(p4TitleString.slice(0, project4Title.length + 1))
         }, 25)
         return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(9), 200)
+        return () => clearTimeout(timer)
       }
     }
-  }, [active, currentStep, titleText, project1Text, project1Title, project2Text, project2Title, project3Text, project3Title, project4Text, project4Title])
+
+    // Step 9: Type project 5 text
+    if (currentStep === 9) {
+      if (project5Text.length < p5TextString.length) {
+        const timer = setTimeout(() => {
+          setProject5Text(p5TextString.slice(0, project5Text.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(10), 100)
+        return () => clearTimeout(timer)
+      }
+    }
+
+    // Step 10: Type project 5 title
+    if (currentStep === 10) {
+      if (project5Title.length < p5TitleString.length) {
+        const timer = setTimeout(() => {
+          setProject5Title(p5TitleString.slice(0, project5Title.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [active, currentStep, titleText, project1Text, project1Title, project2Text, project2Title, project3Text, project3Title, project4Text, project4Title, project5Text, project5Title])
 
   if (active !== "projects") return null
 
@@ -153,9 +181,9 @@ export default function Projects({ active }) {
         </p>
       )}
 
-      {showProjects && (
-        <div className="max-h-[calc(100vh-var(--section-top)-4rem)] overflow-y-auto scrollbar-hide">
-          <a href="https://mind-your-business-agency.vercel.app/" target="_blank"
+      {currentStep >= 1 && (
+        <div className="max-h-[calc(100vh-var(--section-top)-var(--content-y)-2rem)] overflow-y-auto scrollbar-hide pr-2">
+          <a href="https://c-playground-web-edition.vercel.app/" target="_blank"
              className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
             {project1Text && (
               <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project1Text}>
@@ -172,7 +200,7 @@ export default function Projects({ active }) {
           </a>
 
           {currentStep >= 3 && (
-            <a href="https://northernwest.shop/" target="_blank"
+            <a href="https://mind-your-business-agency.vercel.app/" target="_blank"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project2Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project2Text}>
@@ -190,7 +218,7 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 5 && (
-            <a href="https://alaa-younsi.github.io/WebSync-Media-1.0/" target="_blank"
+            <a href="https://northernwest.shop/" target="_blank"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project3Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project3Text}>
@@ -208,8 +236,8 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 7 && (
-            <a href="https://alaa-younsi.github.io/Marlowe/" target="_blank"
-               className="block hover:opacity-50 transition-opacity">
+            <a href="https://alaa-younsi.github.io/WebSync-Media-1.0/" target="_blank"
+               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project4Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project4Text}>
                   {project4Text}
@@ -220,6 +248,24 @@ export default function Projects({ active }) {
                 <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text" data-text={project4Title}>
                   {project4Title}
                   {project4Title.length < p4TitleString.length && currentStep === 8 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+            </a>
+          )}
+
+          {currentStep >= 9 && (
+            <a href="https://alaa-younsi.github.io/Marlowe/" target="_blank"
+               className="block hover:opacity-50 transition-opacity">
+              {project5Text && (
+                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project5Text}>
+                  {project5Text}
+                  {project5Text.length < p5TextString.length && currentStep === 9 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+              {project5Title && (
+                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text" data-text={project5Title}>
+                  {project5Title}
+                  {project5Title.length < p5TitleString.length && currentStep === 10 && <span className="cursor-blink">|</span>}
                 </p>
               )}
             </a>
