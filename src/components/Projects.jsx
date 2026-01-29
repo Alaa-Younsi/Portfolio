@@ -21,8 +21,8 @@ export default function Projects({ active }) {
   const p2TitleString = 'MYB Agency'
   const p3TextString = '2025 / Comission / Online Store'
   const p3TitleString = 'Northernwest'
-  const p4TextString = '2024 / Personal / Agency'
-  const p4TitleString = 'WebSync Media'
+  const p4TextString = '2023 / Comission / School'
+  const p4TitleString = 'ENK School'
   const p5TextString = '2023 / Personal / Portfolio'
   const p5TitleString = 'Marlowe'
 
@@ -236,7 +236,7 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 7 && (
-            <a href="https://alaa-younsi.github.io/WebSync-Media-1.0/" target="_blank"
+            <a href="https://enk-beta.vercel.app/" target="_blank"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project4Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project4Text}>
@@ -254,7 +254,7 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 9 && (
-            <a href="https://alaa-younsi.github.io/Marlowe/" target="_blank"
+            <a href="https://alaa-younsi.github.io/Marlowe-5.0/" target="_blank"
                className="block hover:opacity-50 transition-opacity">
               {project5Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project5Text}>
