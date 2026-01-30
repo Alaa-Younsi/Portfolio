@@ -12,6 +12,10 @@ export default function Projects({ active }) {
   const [project4Title, setProject4Title] = useState('')
   const [project5Text, setProject5Text] = useState('')
   const [project5Title, setProject5Title] = useState('')
+  const [project6Text, setProject6Text] = useState('')
+  const [project6Title, setProject6Title] = useState('')
+  const [project7Text, setProject7Text] = useState('')
+  const [project7Title, setProject7Title] = useState('')
   const [currentStep, setCurrentStep] = useState(0)
 
   const titleString = '■ Development & Design Projects'
@@ -21,10 +25,14 @@ export default function Projects({ active }) {
   const p2TitleString = 'MYB Agency'
   const p3TextString = '2025 / Comission / Online Store'
   const p3TitleString = 'Northernwest'
-  const p4TextString = '2023 / Comission / School'
-  const p4TitleString = 'ENK School'
-  const p5TextString = '2023 / Personal / Portfolio'
-  const p5TitleString = 'Marlowe'
+  const p4TextString = '2024 / Personal / Agency'
+  const p4TitleString = 'SkyWeb Media'
+  const p5TextString = '2024 / Comission / Restaurent'
+  const p5TitleString = 'RTacos'
+  const p6TextString = '2023 / Comission / School'
+  const p6TitleString = 'ENK School'
+  const p7TextString = '2023 / Personal / Portfolio'
+  const p7TitleString = 'Marlowe'
 
   useEffect(() => {
     if (active !== "projects") return
@@ -166,24 +174,77 @@ export default function Projects({ active }) {
           setProject5Title(p5TitleString.slice(0, project5Title.length + 1))
         }, 25)
         return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(11), 200)
+        return () => clearTimeout(timer)
       }
     }
-  }, [active, currentStep, titleText, project1Text, project1Title, project2Text, project2Title, project3Text, project3Title, project4Text, project4Title, project5Text, project5Title])
+
+    // Step 11: Type project 6 text
+    if (currentStep === 11) {
+      if (project6Text.length < p6TextString.length) {
+        const timer = setTimeout(() => {
+          setProject6Text(p6TextString.slice(0, project6Text.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(12), 100)
+        return () => clearTimeout(timer)
+      }
+    }
+
+    // Step 12: Type project 6 title
+    if (currentStep === 12) {
+      if (project6Title.length < p6TitleString.length) {
+        const timer = setTimeout(() => {
+          setProject6Title(p6TitleString.slice(0, project6Title.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(13), 200)
+        return () => clearTimeout(timer)
+      }
+    }
+
+    // Step 13: Type project 7 text
+    if (currentStep === 13) {
+      if (project7Text.length < p7TextString.length) {
+        const timer = setTimeout(() => {
+          setProject7Text(p7TextString.slice(0, project7Text.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(14), 100)
+        return () => clearTimeout(timer)
+      }
+    }
+
+    // Step 14: Type project 7 title
+    if (currentStep === 14) {
+      if (project7Title.length < p7TitleString.length) {
+        const timer = setTimeout(() => {
+          setProject7Title(p7TitleString.slice(0, project7Title.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [active, currentStep, titleText, project1Text, project1Title, project2Text, project2Title, project3Text, project3Title, project4Text, project4Title, project5Text, project5Title, project6Text, project6Title, project7Text, project7Title])
 
   if (active !== "projects") return null
 
   return (
-    <div className="absolute top-[var(--section-top)] right-[var(--content-x)] w-[min(90vw,40rem)] text-right text-[var(--fg)]">
+    <section aria-labelledby="projects-heading" className="absolute top-[var(--section-top)] right-[var(--content-x)] w-[min(90vw,40rem)] text-right text-[var(--fg)]">
       {titleText && (
-        <p className="text-xs sm:text-sm mb-4 sm:mb-6 opacity-80 glitch-text" data-text={titleText}>
+        <h2 id="projects-heading" className="text-xs sm:text-sm mb-4 sm:mb-6 opacity-80 glitch-text" data-text={titleText}>
           {titleText}
           {titleText.length < titleString.length && <span className="cursor-blink">|</span>}
-        </p>
+        </h2>
       )}
 
       {currentStep >= 1 && (
         <div className="max-h-[calc(100vh-var(--section-top)-var(--content-y)-2rem)] overflow-y-auto scrollbar-hide pr-2">
-          <a href="https://c-playground-web-edition.vercel.app/" target="_blank"
+          <a href="https://c-playground-web-edition.vercel.app/" target="_blank" rel="noopener noreferrer"
+             aria-label="Visit CPlayground project (opens in new tab)"
              className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
             {project1Text && (
               <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project1Text}>
@@ -200,7 +261,8 @@ export default function Projects({ active }) {
           </a>
 
           {currentStep >= 3 && (
-            <a href="https://mind-your-business-agency.vercel.app/" target="_blank"
+            <a href="https://mind-your-business-agency.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit MYB Agency project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project2Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project2Text}>
@@ -218,7 +280,8 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 5 && (
-            <a href="https://northernwest.shop/" target="_blank"
+            <a href="https://northernwest.shop/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit Northernwest project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project3Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project3Text}>
@@ -236,7 +299,8 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 7 && (
-            <a href="https://enk-beta.vercel.app/" target="_blank"
+            <a href="https://sky-web-media.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit SkyWeb Media project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project4Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project4Text}>
@@ -254,8 +318,9 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 9 && (
-            <a href="https://alaa-younsi.github.io/Marlowe-5.0/" target="_blank"
-               className="block hover:opacity-50 transition-opacity">
+            <a href="https://r-tacos.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit RTacos project (opens in new tab)"
+               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project5Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project5Text}>
                   {project5Text}
@@ -270,8 +335,46 @@ export default function Projects({ active }) {
               )}
             </a>
           )}
+
+          {currentStep >= 11 && (
+            <a href="https://enk-beta.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit ENK School project (opens in new tab)"
+               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
+              {project6Text && (
+                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project6Text}>
+                  {project6Text}
+                  {project6Text.length < p6TextString.length && currentStep === 11 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+              {project6Title && (
+                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text" data-text={project6Title}>
+                  {project6Title}
+                  {project6Title.length < p6TitleString.length && currentStep === 12 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+            </a>
+          )}
+
+          {currentStep >= 13 && (
+            <a href="https://alaa-younsi.github.io/Marlowe-5.0/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit Marlowe project (opens in new tab)"
+               className="block hover:opacity-50 transition-opacity">
+              {project7Text && (
+                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project7Text}>
+                  {project7Text}
+                  {project7Text.length < p7TextString.length && currentStep === 13 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+              {project7Title && (
+                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text" data-text={project7Title}>
+                  {project7Title}
+                  {project7Title.length < p7TitleString.length && currentStep === 14 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+            </a>
+          )}
         </div>
       )}
-    </div>
+    </section>
   )
 }

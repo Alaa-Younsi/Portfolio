@@ -129,12 +129,12 @@ export default function Info({ active }) {
 
   return (
     <>
-      <div className="absolute top-[60%] sm:top-[var(--section-top)] left-1/2 -translate-x-1/2 -translate-y-1/2 sm:translate-y-0 w-[min(90vw,40rem)] text-[var(--fg)] text-center">
+      <section aria-labelledby="about-heading" className="absolute top-[60%] sm:top-[var(--section-top)] left-1/2 -translate-x-1/2 -translate-y-1/2 sm:translate-y-0 w-[min(90vw,40rem)] text-[var(--fg)] text-center">
         {titleText && (
-          <p className="text-[0.6rem] sm:text-[clamp(0.7rem,1vw,0.9rem)] font-normal opacity-80 glitch-text" data-text={titleText}>
+          <h2 id="about-heading" className="text-[0.6rem] sm:text-[clamp(0.7rem,1vw,0.9rem)] font-normal opacity-80 glitch-text" data-text={titleText}>
             {titleText}
             {titleText.length < titleString.length && <span className="cursor-blink">|</span>}
-          </p>
+          </h2>
         )}
 
         {currentStep >= 1 && descText && (
@@ -177,19 +177,21 @@ export default function Info({ active }) {
             )}
           </div>
         )}
-      </div>
+      </section>
 
       {currentStep >= 6 && (
         <div className="absolute bottom-[var(--content-y)] right-[var(--content-x)] text-[var(--fg)] space-y-2 text-right">
           {link1Text && (
-            <a href="https://www.instagram.com/infinituxs/" target="_blank" 
+            <a href="https://www.instagram.com/infinituxs/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit Instagram profile (opens in new tab)"
                className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity glitch-text" data-text={link1Text}>
               {link1Text}
               {link1Text.length < link1String.length && currentStep === 6 && <span className="cursor-blink">|</span>}
             </a>
           )}
           {currentStep >= 7 && link2Text && (
-            <a href="https://x.com/ashv3il" target="_blank" 
+            <a href="https://x.com/ashv3il" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit Twitter profile (opens in new tab)"
                className="block text-xs sm:text-sm hover:opacity-50 transition-opacity glitch-text" data-text={link2Text}>
               {link2Text}
               {link2Text.length < link2String.length && currentStep === 7 && <span className="cursor-blink">|</span>}

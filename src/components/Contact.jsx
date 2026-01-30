@@ -19,8 +19,10 @@ export default function Contact({ active }) {
 
   return (
     <a
-      href="https://api.whatsapp.com/send/?phone=213696281500&text&type=phone_number&app_absent=0"
+      href="https://linktr.ee/infinituxs"
       target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Contact via Linktree (opens in new tab)"
       className="absolute right-[var(--content-x)] bottom-[var(--content-y)] text-[var(--fg)] font-normal hover:opacity-50 transition-opacity text-[clamp(0.7rem,1vw,0.95rem)] z-20"
     >
       {contactText || <span className="cursor-blink">|</span>}
