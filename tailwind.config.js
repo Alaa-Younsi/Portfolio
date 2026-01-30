@@ -28,6 +28,9 @@ export default {
     },
   },
   plugins: [],
+  safelist: [
+    'glitch-effect'
+  ]
 }
 
 

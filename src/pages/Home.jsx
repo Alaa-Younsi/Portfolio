@@ -95,18 +95,7 @@ export default function HomePage() {
         <meta name="keywords" content="developer, designer, web development, portfolio, Alaa Younsi, frontend, backend, React, JavaScript, Python, PHP, NodeJS" />
         <link rel="canonical" href="https://alaa-younsi.vercel.app" />
         
-        <style>{`
-          @keyframes glitch {
-            0%, 100% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(2px, -2px); }
-            60% { transform: translate(-2px, -2px); }
-            80% { transform: translate(2px, 2px); }
-          }
-          .glitch-effect {
-            animation: glitch 0.3s ease-in-out 3;
-          }
-        `}</style>
+        {/* glitch CSS moved to src/index.css to ensure consistent production builds */}
       </Helmet>
 
       {/* Background stars inside frame */}

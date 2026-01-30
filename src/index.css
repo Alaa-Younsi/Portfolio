@@ -80,6 +80,11 @@ body {
   animation: glitch-2 0.3s infinite;
 }
 
+/* Backward-compatible class name used in components */
+.glitch-effect {
+  animation: glitch 0.3s ease-in-out 3;
+}
+
 .glitch-text::before,
 .glitch-text::after {
   content: '';
