@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 
 const STAR_SIZE = 3;
 const STAR_MIN_SCALE = 0.2;
 const OVERFLOW_THRESHOLD = 50;
 
-export default function Background({ isDarkMode = true }) {
+export default function Background({ isDarkMode = true, fullScreen = false }) {
   const colorsRef = useRef({ star: "#fff" });
 
   const canvasRef = useRef(null);
@@ -34,7 +34,10 @@ export default function Background({ isDarkMode = true }) {
     }
   }, [isDarkMode]);
 
-  const generateStars = () => {
+  // When fullScreen toggles, expand or restore the frame bounds and regenerate stars
+  // (moved below function declarations so helpers are defined)
+
+  const generateStars = useCallback(() => {
     // Calculate visible area for stars
     const bounds = frameBoundsRef.current;
     const visibleWidth = window.innerWidth * (bounds.right - bounds.left);
@@ -52,7 +55,7 @@ export default function Background({ isDarkMode = true }) {
     }
 
     starsRef.current = stars;
-  };
+  }, []);
 
   const placeStar = (star) => {
     // Place star only within frame bounds
@@ -116,17 +119,7 @@ export default function Background({ isDarkMode = true }) {
     }
   };
 
-  const isWithinFrame = (x, y) => {
-    const bounds = frameBoundsRef.current;
-    const leftBound = window.innerWidth * bounds.left;
-    const rightBound = window.innerWidth * bounds.right;
-    const topBound = window.innerHeight * bounds.top;
-    const bottomBound = window.innerHeight * bounds.bottom;
-
-    return x >= leftBound && x <= rightBound && y >= topBound && y <= bottomBound;
-  };
-
-  const resize = () => {
+  const resize = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -134,12 +127,16 @@ export default function Background({ isDarkMode = true }) {
     const actualFrameX = Math.max(12, Math.min(window.innerWidth * 0.025, 32));
     const actualFrameY = Math.max(16, Math.min(window.innerHeight * 0.05, 48));
 
-    frameBoundsRef.current = {
-      top: actualFrameY / window.innerHeight,
-      bottom: 1 - actualFrameY / window.innerHeight,
-      left: actualFrameX / window.innerWidth,
-      right: 1 - actualFrameX / window.innerWidth,
-    };
+    if (!fullScreen) {
+      frameBoundsRef.current = {
+        top: actualFrameY / window.innerHeight,
+        bottom: 1 - actualFrameY / window.innerHeight,
+        left: actualFrameX / window.innerWidth,
+        right: 1 - actualFrameX / window.innerWidth,
+      };
+    } else {
+      frameBoundsRef.current = { top: 0, bottom: 1, left: 0, right: 1 };
+    }
 
     scaleRef.current = window.devicePixelRatio || 1;
     widthRef.current = window.innerWidth * scaleRef.current;
@@ -149,7 +146,15 @@ export default function Background({ isDarkMode = true }) {
     canvas.height = heightRef.current;
 
     starsRef.current.forEach(placeStar);
-  };
+  }, [fullScreen]);
+
+  useEffect(() => {
+    if (fullScreen) {
+      frameBoundsRef.current = { top: 0, bottom: 1, left: 0, right: 1 };
+    }
+    generateStars();
+    resize();
+  }, [fullScreen, generateStars, resize]);
 
   const update = () => {
     velocityRef.current.tx *= 0.96;
@@ -242,13 +247,7 @@ export default function Background({ isDarkMode = true }) {
     const pointer = pointerRef.current;
     const velocity = velocityRef.current;
 
-    // Only track movement if pointer is within frame
-    if (!isWithinFrame(x, y)) {
-      pointer.x = null;
-      pointer.y = null;
-      return;
-    }
-
+    // Track movement regardless of frame boundaries
     if (pointer.x !== null && pointer.y !== null) {
       const ox = x - pointer.x;
       const oy = y - pointer.y;
@@ -286,9 +285,10 @@ export default function Background({ isDarkMode = true }) {
     step();
 
     window.addEventListener('resize', resize);
-    canvas.addEventListener('mousemove', onMouseMove);
-    canvas.addEventListener('touchmove', onTouchMove, { passive: false });
-    canvas.addEventListener('touchend', onMouseLeave);
+    // Attach mouse events to document to track cursor everywhere
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('touchmove', onTouchMove, { passive: false });
+    document.addEventListener('touchend', onMouseLeave);
     document.addEventListener('mouseleave', onMouseLeave);
 
     return () => {
@@ -296,9 +296,9 @@ export default function Background({ isDarkMode = true }) {
         cancelAnimationFrame(animationRef.current);
       }
       window.removeEventListener('resize', resize);
-      canvas.removeEventListener('mousemove', onMouseMove);
-      canvas.removeEventListener('touchmove', onTouchMove);
-      canvas.removeEventListener('touchend', onMouseLeave);
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('touchmove', onTouchMove);
+      document.removeEventListener('touchend', onMouseLeave);
       document.removeEventListener('mouseleave', onMouseLeave);
     };
   }, );
@@ -306,15 +306,15 @@ export default function Background({ isDarkMode = true }) {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 z-0"
+      className="fixed inset-0"
       style={{
         position: 'fixed',
         top: 0,
         left: 0,
         width: '100%',
         height: '100%',
-        zIndex: 0,
-        pointerEvents: 'auto',
+        zIndex: fullScreen ? 5 : 0,
+        pointerEvents: 'none',
         backgroundColor: isDarkMode ? "#000" : "#fff",
       }}
     />

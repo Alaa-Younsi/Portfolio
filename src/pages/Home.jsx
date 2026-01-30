@@ -8,6 +8,7 @@ import Projects from "../components/Projects";
 import Contact from "../components/Contact";
 import SplashScreen from "../components/SplashScreen";
 import Background from "../components/Background";
+import BlackHole from "../components/BlackHole";
 
 export default function HomePage() {
   const [active, setActive] = useState("home");
@@ -15,6 +16,9 @@ export default function HomePage() {
   const [homeClickCount, setHomeClickCount] = useState(0);
   const [projectsClickCount, setProjectsClickCount] = useState(0);
   const [aboutClickCount, setAboutClickCount] = useState(0);
+  const [isExploding, setIsExploding] = useState(false);
+  const [isGlitching, setIsGlitching] = useState(false);
+  const [showHomeButton, setShowHomeButton] = useState(false);
 
   const handleNavigation = (section) => {
     setActive(section);
@@ -29,6 +33,29 @@ export default function HomePage() {
     }
   };
 
+  const handleBlackHoleExplode = () => {
+    // Start glitch effect immediately
+    setIsGlitching(true);
+    
+    // After glitch animation (300ms * 3 iterations = 900ms), hide content
+    setTimeout(() => {
+      setIsExploding(true);
+    }, 900);
+    
+    // Show home button after explosion animation completes (1000ms) + glitch (900ms) + delay
+    setTimeout(() => {
+      setShowHomeButton(true);
+    }, 2100);
+  };
+
+  const handleRestore = () => {
+    setShowHomeButton(false);
+    setTimeout(() => {
+      setIsExploding(false);
+      setIsGlitching(false);
+    }, 300); // Wait for fade out
+  };
+
   const themeVars = {
     "--bg": isDarkMode ? "#000" : "#fff",
     "--fg": isDarkMode ? "#fff" : "#000",
@@ -41,7 +68,11 @@ export default function HomePage() {
   };
 
   return (
-    <div style={themeVars} className="min-h-screen bg-[var(--bg)] text-[var(--fg)]" role="main">
+    <div 
+      style={themeVars} 
+      className="min-h-screen bg-[var(--bg)] text-[var(--fg)]"
+      role="main"
+    >
       <Helmet>
         <title>Alaa Younsi - Developer & Designer</title>
         <meta name="description" content="Alaa Younsi is a developer and designer specializing in website development, design, and server-side services. Explore creative projects and innovative digital solutions." />
@@ -63,10 +94,23 @@ export default function HomePage() {
         <meta name="author" content="Alaa Younsi" />
         <meta name="keywords" content="developer, designer, web development, portfolio, Alaa Younsi, frontend, backend, React, JavaScript, Python, PHP, NodeJS" />
         <link rel="canonical" href="https://alaa-younsi.vercel.app" />
+        
+        <style>{`
+          @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+            60% { transform: translate(-2px, -2px); }
+            80% { transform: translate(2px, 2px); }
+          }
+          .glitch-effect {
+            animation: glitch 0.3s ease-in-out 3;
+          }
+        `}</style>
       </Helmet>
 
       {/* Background stars inside frame */}
-      <Background isDarkMode={isDarkMode} />
+      <Background isDarkMode={isDarkMode} fullScreen={isExploding} />
       
       {/* Splash screen */}
       <SplashScreen />
@@ -75,18 +119,41 @@ export default function HomePage() {
         type="button"
         onClick={() => setIsDarkMode((v) => !v)}
         aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-        className="fixed right-[var(--content-x)] sm:left-1/2 sm:-translate-x-1/2 sm:right-auto top-[var(--content-y)] z-20 border border-[var(--border)] text-[var(--fg)] px-2 py-0.5 sm:px-3 sm:py-1 text-[0.65rem] sm:text-xs font-normal tracking-wide"
+        className={`fixed right-[var(--content-x)] sm:left-1/2 sm:-translate-x-1/2 sm:right-auto top-[var(--content-y)] z-20 border border-[var(--border)] text-[var(--fg)] px-2 py-0.5 sm:px-3 sm:py-1 text-[0.65rem] sm:text-xs font-normal tracking-wide transition-opacity ${
+          isExploding ? 'opacity-0 pointer-events-none' : 'opacity-100'
+        } ${isGlitching ? 'glitch-effect' : ''}`}
       >
         {isDarkMode ? "Dark" : "Light"}
       </button>
+
+      {/* Home restore button */}
+      {showHomeButton && (
+        <button
+          type="button"
+          onClick={handleRestore}
+          aria-label="Restore home"
+          className="fixed right-[var(--content-x)] sm:left-1/2 sm:-translate-x-1/2 sm:right-auto top-[var(--content-y)] z-20 border border-[var(--border)] text-[var(--fg)] px-2 py-0.5 sm:px-3 sm:py-1 text-[0.65rem] sm:text-xs font-normal tracking-wide animate-[fadeIn_0.5s_ease-in-out]"
+          style={{
+            animation: 'fadeIn 0.5s ease-in-out'
+          }}
+        >
+          Home
+        </button>
+      )}
       
       {/* UI Components */}
-      <Header active={active} setActive={handleNavigation} />
-      {active === "home" && <Hero key={homeClickCount} active={active} />}
-      {active === "info" && <About key={aboutClickCount} active={active} />}
-      <Skills active={active} />
-      {active === "projects" && <Projects key={projectsClickCount} active={active} />}
-      {active === "contact" && <Contact active={active} />}
+      <div className={`transition-opacity duration-300 ${
+        isExploding ? 'opacity-0 pointer-events-none' : 'opacity-100'
+      } ${isGlitching ? 'glitch-effect' : ''}`}>
+        <Header active={active} setActive={handleNavigation} />
+        {active === "home" && <Hero key={homeClickCount} active={active} />}
+        {active === "info" && <About key={aboutClickCount} active={active} />}
+        <Skills active={active} />
+        {active === "projects" && <Projects key={projectsClickCount} active={active} />}
+        {active === "contact" && <Contact active={active} />}
+      </div>
+      
+      {active === "home" && <BlackHole active={active} onExplode={handleBlackHoleExplode} isExploding={isExploding} />}
     </div>
   );
 }
