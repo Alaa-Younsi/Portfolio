@@ -17,7 +17,6 @@ export default function HomePage() {
   const [projectsClickCount, setProjectsClickCount] = useState(0);
   const [aboutClickCount, setAboutClickCount] = useState(0);
   const [isExploding, setIsExploding] = useState(false);
-  const [isGlitching, setIsGlitching] = useState(false);
   const [showHomeButton, setShowHomeButton] = useState(false);
 
   const handleNavigation = (section) => {
@@ -34,25 +33,20 @@ export default function HomePage() {
   };
 
   const handleBlackHoleExplode = () => {
-    // Start glitch effect immediately
-    setIsGlitching(true);
-    
-    // After glitch animation (300ms * 3 iterations = 900ms), hide content
-    setTimeout(() => {
-      setIsExploding(true);
-    }, 900);
-    
-    // Show home button after explosion animation completes (1000ms) + glitch (900ms) + delay
+    // Trigger explosion state immediately for a fast, smooth effect
+    setIsExploding(true);
+
+    // Show home button after explosion animation completes (~800-900ms)
     setTimeout(() => {
       setShowHomeButton(true);
-    }, 2100);
+    }, 900);
   };
 
   const handleRestore = () => {
     setShowHomeButton(false);
     setTimeout(() => {
       setIsExploding(false);
-      setIsGlitching(false);
+      // no glitch state to clear
     }, 300); // Wait for fade out
   };
 
@@ -110,7 +104,7 @@ export default function HomePage() {
         aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
         className={`fixed right-[var(--content-x)] sm:left-1/2 sm:-translate-x-1/2 sm:right-auto top-[var(--content-y)] z-20 border border-[var(--border)] text-[var(--fg)] px-2 py-0.5 sm:px-3 sm:py-1 text-[0.65rem] sm:text-xs font-normal tracking-wide transition-opacity ${
           isExploding ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        } ${isGlitching ? 'glitch-effect' : ''}`}
+        }`}
       >
         {isDarkMode ? "Dark" : "Light"}
       </button>
@@ -131,9 +125,9 @@ export default function HomePage() {
       )}
       
       {/* UI Components */}
-      <div className={`transition-opacity duration-300 ${
+      <div className={`transition-opacity duration-150 ${
         isExploding ? 'opacity-0 pointer-events-none' : 'opacity-100'
-      } ${isGlitching ? 'glitch-effect' : ''}`}>
+      }`}>
         <Header active={active} setActive={handleNavigation} />
         {active === "home" && <Hero key={homeClickCount} active={active} />}
         {active === "info" && <About key={aboutClickCount} active={active} />}

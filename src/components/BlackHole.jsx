@@ -118,9 +118,16 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
     const blackHoleRadius = 50;
 
     if (particlesRef.current.length === 0) {
-      const num = 600;
+      const num = isMobile ? 180 : 600;
       for (let i = 0; i < num; i++) {
-        particlesRef.current.push(new Particle(centerX, centerY, blackHoleRadius));
+        const p = new Particle(centerX, centerY, blackHoleRadius);
+        // Mobile performance tweaks: smaller tails and sizes
+        if (isMobile) {
+          p.tl = 1; // no trailing ellipses, simple dots
+          p.size *= 0.6;
+          p.baseSpeed *= 1.1;
+        }
+        particlesRef.current.push(p);
       }
     }
 
@@ -198,11 +205,11 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
         const centerY = size / 2;
         // Create explosion particles
         explosionParticlesRef.current = [];
-        const explosionCount = 150;
+        const explosionCount = isMobile ? 80 : 150;
         for (let i = 0; i < explosionCount; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const speed = 1 + Math.random() * 2;
-          const pSize = 1 + Math.random() * 3;
+          const speed = (isMobile ? 0.8 : 1) + Math.random() * (isMobile ? 1.2 : 2);
+          const pSize = (isMobile ? 0.8 : 1) + Math.random() * (isMobile ? 2 : 3);
           const color = Math.random() < 0.5 ? 'rgba(255,0,255,' : 'rgba(0,255,255,';
           explosionParticlesRef.current.push({
             x: centerX,
@@ -238,8 +245,8 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
       style={{ 
         width: '280px', 
         height: '280px', 
-        marginLeft: isMobile ? '0' : '50px', 
-        marginTop: isMobile ? '0' : '-30px',
+         left: '50%',
+         top: '50%',
         transform: isMobile ? 'translate(-50%, -50%) scale(0.7)' : 'translate(-50%, -50%)'
       }}
     >
