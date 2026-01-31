@@ -191,7 +191,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [active, isHovered, parentIsExploding]);
+  }, [active, isHovered, parentIsExploding, isMobile]);
 
   useEffect(() => {
     if (parentIsExploding && !explosionStartRef.current) {
@@ -226,7 +226,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
     if (!parentIsExploding) {
       explosionStartRef.current = null;
     }
-  }, [parentIsExploding]);
+  }, [parentIsExploding, isMobile]);
 
   const handleClick = () => {
     if (onExplode) {
