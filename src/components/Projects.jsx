@@ -16,23 +16,27 @@ export default function Projects({ active }) {
   const [project6Title, setProject6Title] = useState('')
   const [project7Text, setProject7Text] = useState('')
   const [project7Title, setProject7Title] = useState('')
+  const [project8Text, setProject8Text] = useState('')
+  const [project8Title, setProject8Title] = useState('')
   const [currentStep, setCurrentStep] = useState(0)
 
   const titleString = '■ Development & Design Projects'
-  const p1TextString = '2026 / Personal / Playground'
-  const p1TitleString = 'CPlayground'
-  const p2TextString = '2026 / Comission / Agency'
-  const p2TitleString = 'MYB Agency'
-  const p3TextString = '2025 / Comission / Online Store'
-  const p3TitleString = 'Northernwest'
-  const p4TextString = '2024 / Personal / Agency'
-  const p4TitleString = 'SkyWeb Media'
-  const p5TextString = '2024 / Comission / Restaurent'
-  const p5TitleString = 'RTacos'
-  const p6TextString = '2023 / Comission / School'
-  const p6TitleString = 'ENK School'
-  const p7TextString = '2023 / Personal / Portfolio'
-  const p7TitleString = 'Marlowe'
+  const p1TextString = '2026 / Personal / ADS Platform'
+  const p1TitleString = 'AdCampaign Pro'
+  const p2TextString = '2026 / Personal / Playground'
+  const p2TitleString = 'CPlayground'
+  const p3TextString = '2026 / Comission / Agency'
+  const p3TitleString = 'MYB Agency'
+  const p4TextString = '2025 / Comission / Online Store'
+  const p4TitleString = 'Northernwest'
+  const p5TextString = '2024 / Personal / Agency'
+  const p5TitleString = 'SkyWeb Media'
+  const p6TextString = '2024 / Comission / Restaurent'
+  const p6TitleString = 'RTacos'
+  const p7TextString = '2023 / Comission / School'
+  const p7TitleString = 'ENK School'
+  const p8TextString = '2023 / Personal / Portfolio'
+  const p8TitleString = 'Marlowe'
 
   useEffect(() => {
     if (active !== "projects") return
@@ -226,9 +230,35 @@ export default function Projects({ active }) {
           setProject7Title(p7TitleString.slice(0, project7Title.length + 1))
         }, 25)
         return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(15), 200)
+        return () => clearTimeout(timer)
       }
     }
-  }, [active, currentStep, titleText, project1Text, project1Title, project2Text, project2Title, project3Text, project3Title, project4Text, project4Title, project5Text, project5Title, project6Text, project6Title, project7Text, project7Title])
+
+    // Step 15: Type project 8 text
+    if (currentStep === 15) {
+      if (project8Text.length < p8TextString.length) {
+        const timer = setTimeout(() => {
+          setProject8Text(p8TextString.slice(0, project8Text.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      } else {
+        const timer = setTimeout(() => setCurrentStep(16), 100)
+        return () => clearTimeout(timer)
+      }
+    }
+
+    // Step 16: Type project 8 title
+    if (currentStep === 16) {
+      if (project8Title.length < p8TitleString.length) {
+        const timer = setTimeout(() => {
+          setProject8Title(p8TitleString.slice(0, project8Title.length + 1))
+        }, 25)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [active, currentStep, titleText, project1Text, project1Title, project2Text, project2Title, project3Text, project3Title, project4Text, project4Title, project5Text, project5Title, project6Text, project6Title, project7Text, project7Title, project8Text, project8Title])
 
   if (active !== "projects") return null
 
@@ -243,8 +273,8 @@ export default function Projects({ active }) {
 
       {currentStep >= 1 && (
         <div className="max-h-[calc(100vh-var(--section-top)-var(--content-y)-2rem)] overflow-y-auto scrollbar-hide pr-2">
-          <a href="https://c-playground-web-edition.vercel.app/" target="_blank" rel="noopener noreferrer"
-             aria-label="Visit CPlayground project (opens in new tab)"
+          <a href="https://ads-platform-frontend-psi.vercel.app/login" target="_blank" rel="noopener noreferrer"
+             aria-label="Visit AdCampaign Pro project (opens in new tab)"
              className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
             {project1Text && (
               <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project1Text}>
@@ -261,8 +291,8 @@ export default function Projects({ active }) {
           </a>
 
           {currentStep >= 3 && (
-            <a href="https://mind-your-business-agency.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit MYB Agency project (opens in new tab)"
+            <a href="https://c-playground-web-edition.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit CPlayground project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project2Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project2Text}>
@@ -280,8 +310,8 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 5 && (
-            <a href="https://northernwest.shop/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit Northernwest project (opens in new tab)"
+            <a href="https://mind-your-business-agency.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit MYB Agency project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project3Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project3Text}>
@@ -299,8 +329,8 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 7 && (
-            <a href="https://sky-web-media.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit SkyWeb Media project (opens in new tab)"
+            <a href="https://northernwest.shop/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit Northernwest project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project4Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project4Text}>
@@ -318,8 +348,8 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 9 && (
-            <a href="https://r-tacos.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit RTacos project (opens in new tab)"
+            <a href="https://sky-web-media.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit SkyWeb Media project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project5Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project5Text}>
@@ -337,8 +367,8 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 11 && (
-            <a href="https://enk-beta.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit ENK School project (opens in new tab)"
+            <a href="https://r-tacos.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit RTacos project (opens in new tab)"
                className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project6Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project6Text}>
@@ -356,9 +386,9 @@ export default function Projects({ active }) {
           )}
 
           {currentStep >= 13 && (
-            <a href="https://alaa-younsi.github.io/Marlowe-5.0/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit Marlowe project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity">
+            <a href="https://enk-beta.vercel.app/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit ENK School project (opens in new tab)"
+               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
               {project7Text && (
                 <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project7Text}>
                   {project7Text}
@@ -369,6 +399,25 @@ export default function Projects({ active }) {
                 <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text" data-text={project7Title}>
                   {project7Title}
                   {project7Title.length < p7TitleString.length && currentStep === 14 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+            </a>
+          )}
+
+          {currentStep >= 15 && (
+            <a href="https://alaa-younsi.github.io/Marlowe-5.0/" target="_blank" rel="noopener noreferrer"
+               aria-label="Visit Marlowe project (opens in new tab)"
+               className="block hover:opacity-50 transition-opacity">
+              {project8Text && (
+                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project8Text}>
+                  {project8Text}
+                  {project8Text.length < p8TextString.length && currentStep === 15 && <span className="cursor-blink">|</span>}
+                </p>
+              )}
+              {project8Title && (
+                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text" data-text={project8Title}>
+                  {project8Title}
+                  {project8Title.length < p8TitleString.length && currentStep === 16 && <span className="cursor-blink">|</span>}
                 </p>
               )}
             </a>
