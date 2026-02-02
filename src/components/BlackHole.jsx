@@ -1,88 +1,72 @@
 import { useEffect, useRef, useState } from 'react';
 
-class Particle {
-  constructor(x, y, r) {
-    this.ox = x;
-    this.oy = y;
-    this.br = r;
-    this.re = Math.random() * r * 1.5;
+// Accretion disk particle for smooth, scientifically accurate rendering
+class DiskParticle {
+  constructor(centerX, centerY, innerRadius, outerRadius) {
+    this.centerX = centerX;
+    this.centerY = centerY;
     
-    // Glitch effect colors - magenta and cyan
-    const colorType = Math.random();
-    const alpha = 0.4 + Math.random() * 0.5;
-    if (colorType < 0.5) {
-      this.col = `rgba(255, 0, 255, ${alpha})`; // Magenta
+    // Random position in disk with weighted distribution (more particles closer to black hole)
+    const radiusFactor = Math.pow(Math.random(), 0.6); // Weight towards inner radius
+    this.radius = innerRadius + radiusFactor * (outerRadius - innerRadius);
+    this.angle = Math.random() * Math.PI * 2;
+    
+    // Orbital speed (faster closer to black hole - Keplerian motion)
+    this.speed = 0.8 / Math.sqrt(this.radius);
+    
+    // Color based on distance (hotter closer to black hole - orange to red)
+    const temp = 1 - (this.radius - innerRadius) / (outerRadius - innerRadius);
+    this.brightness = 0.3 + temp * 0.7;
+    
+    // Doppler effect colors (approaching vs receding)
+    const dopplerShift = Math.cos(this.angle);
+    if (dopplerShift > 0) {
+      // Approaching - blueshift
+      this.r = 200 + temp * 55;
+      this.g = 150 + temp * 80;
+      this.b = 100 + dopplerShift * 100;
     } else {
-      this.col = `rgba(0, 255, 255, ${alpha})`; // Cyan
+      // Receding - redshift
+      this.r = 255;
+      this.g = 100 + temp * 100;
+      this.b = 50 - dopplerShift * 30;
     }
     
-    this.a = Math.random() * 2 * Math.PI;
-    this.size = 0.5 + Math.random() * 2;
-    this.q = 0.15 + Math.random() * 0.15; // Flatter orbit
-    this.h2p = 5;
-    
-    // Distance-based speed for gravitational effect
-    const distance = this.br + this.re;
-    this.baseSpeed = (1 / (distance * 0.8)) * 0.8;
-    
-    this.x = this.ox + (this.br + this.re + this.size + this.h2p) * Math.cos(this.a);
-    this.y = this.oy + (this.br + this.re + this.size + this.h2p) * this.q * Math.sin(this.a);
-    this.tail = [{ x: this.x, y: this.y, a: this.a }];
-    this.tl = Math.floor(Math.random() * 3 + 3);
+    // Slight vertical offset for 3D effect
+    this.verticalOffset = Math.sin(this.angle) * this.radius * 0.15;
   }
-
-  move(x, y, speed) {
-    this.ox = x;
-    this.oy = y;
-    this.x = this.ox + (this.br + this.re + this.size + this.h2p) * Math.cos(this.a);
-    this.y = this.oy + (this.br + this.re + this.size + this.h2p) * this.q * Math.sin(this.a);
-    this.tail.push({ x: this.x, y: this.y, a: this.a });
-
-    if (this.tail.length > this.tl) {
-      this.tail.splice(0, 1);
-    }
-    this.a += this.baseSpeed * speed;
+  
+  update() {
+    this.angle += this.speed * 0.01;
+    if (this.angle > Math.PI * 2) this.angle -= Math.PI * 2;
   }
-
-  show(b, f) {
-    for (let i = 0; i < this.tail.length; i++) {
-      const opacity = (i / this.tail.length) * 0.8;
-      const ctx = Math.floor((this.tail[i].a + Math.random() * 0.2 - 0.1) / Math.PI) % 2 !== 0 ? b : f;
-      
-      // Draw elongated ellipse for melted plasma effect with curved rotation
-      if (i > 0) {
-        const prevTail = this.tail[i - 1];
-        const angle = Math.atan2(this.tail[i].y - prevTail.y, this.tail[i].x - prevTail.x);
-        
-        ctx.save();
-        ctx.translate(this.tail[i].x, this.tail[i].y);
-        ctx.rotate(angle);
-        ctx.beginPath();
-        // Wider ellipse with more curve following the rotation
-        ctx.ellipse(0, 0, this.size * 6, this.size * 0.8, 0, 0, 2 * Math.PI);
-        ctx.fillStyle = this.col.replace(/[\d.]+\)$/g, opacity * 0.5 + ')');
-        ctx.fill();
-        ctx.restore();
-      } else {
-        ctx.beginPath();
-        ctx.arc(this.tail[i].x, this.tail[i].y, this.size, 0, 2 * Math.PI);
-        ctx.fillStyle = this.col.replace(/[\d.]+\)$/g, opacity * 0.5 + ')');
-        ctx.fill();
-      }
-    }
+  
+  draw(ctx) {
+    const x = this.centerX + Math.cos(this.angle) * this.radius;
+    const y = this.centerY + Math.sin(this.angle) * this.radius * 0.3 + this.verticalOffset;
+    
+    // Particle size based on distance (perspective)
+    const size = 1 + (1 - (this.radius / 150)) * 1.5;
+    
+    // Alpha based on vertical position (back particles are dimmer)
+    const alpha = this.brightness * (0.4 + 0.6 * Math.abs(Math.cos(this.angle)));
+    
+    ctx.fillStyle = `rgba(${this.r}, ${this.g}, ${this.b}, ${alpha})`;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
 export default function BlackHole({ active, onExplode, isExploding: parentIsExploding }) {
-  const backCanvasRef = useRef(null);
-  const middleCanvasRef = useRef(null);
-  const frontCanvasRef = useRef(null);
+  const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const particlesRef = useRef([]);
   const explosionParticlesRef = useRef([]);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const explosionStartRef = useRef(null);
+  const timeRef = useRef(0);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -96,95 +80,129 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
   useEffect(() => {
     if (active !== "home") return;
 
-    const backCanvas = backCanvasRef.current;
-    const middleCanvas = middleCanvasRef.current;
-    const frontCanvas = frontCanvasRef.current;
-    if (!backCanvas || !middleCanvas || !frontCanvas) return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    const b = backCanvas.getContext('2d');
-    const m = middleCanvas.getContext('2d');
-    const f = frontCanvas.getContext('2d');
-
-    const size = 280;
-    backCanvas.width = size;
-    middleCanvas.width = size;
-    frontCanvas.width = size;
-    backCanvas.height = size;
-    middleCanvas.height = size;
-    frontCanvas.height = size;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    
+    // Same design for both, just different size
+    const size = isMobile ? 240 : 300;
+    canvas.width = size;
+    canvas.height = size;
 
     const centerX = size / 2;
     const centerY = size / 2;
-    const blackHoleRadius = 50;
+    const scale = size / 300; // Scale factor based on desktop size
+    const eventHorizon = 30 * scale; // Event horizon radius
+    const innerDisk = 50 * scale;
+    const outerDisk = 130 * scale;
 
-    if (particlesRef.current.length === 0) {
-      const num = isMobile ? 180 : 600;
-      for (let i = 0; i < num; i++) {
-        const p = new Particle(centerX, centerY, blackHoleRadius);
-        // Mobile performance tweaks: smaller tails and sizes
-        if (isMobile) {
-          p.tl = 1; // no trailing ellipses, simple dots
-          p.size *= 0.6;
-          p.baseSpeed *= 1.1;
-        }
-        particlesRef.current.push(p);
+    // Reinitialize particles with correct dimensions for current screen size
+    if (particlesRef.current.length === 0 || particlesRef.current[0]?.centerX !== centerX) {
+      particlesRef.current = [];
+      const particleCount = 400; // Same for both mobile and desktop
+      for (let i = 0; i < particleCount; i++) {
+        particlesRef.current.push(new DiskParticle(centerX, centerY, innerDisk, outerDisk));
       }
     }
 
-    const draw = () => {
-      b.globalCompositeOperation = 'lighter';
-      f.globalCompositeOperation = 'lighter';
+    const drawBlackHole = () => {
+      // Photon sphere glow (gravitational lensing effect) - drawn first
+      const gradient = ctx.createRadialGradient(
+        centerX, centerY, eventHorizon,
+        centerX, centerY, eventHorizon + 8
+      );
+      gradient.addColorStop(0, 'rgba(255, 150, 50, 0.3)');
+      gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, eventHorizon + 8, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Event horizon (pure black) - drawn on top to ensure it's fully black
+      ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, eventHorizon, 0, Math.PI * 2);
+      ctx.fill();
+    };
 
+    const drawAccretionDisk = () => {
+      // Draw particles (sorted by Y for proper layering)
+      const sorted = [...particlesRef.current].sort((a, b) => {
+        const yA = centerY + Math.sin(a.angle) * a.radius * 0.3 + a.verticalOffset;
+        const yB = centerY + Math.sin(b.angle) * b.radius * 0.3 + b.verticalOffset;
+        return yA - yB;
+      });
+      
+      sorted.forEach(particle => {
+        particle.update();
+        particle.draw(ctx);
+      });
+    };
+
+    const drawExplosion = () => {
+      const elapsed = Date.now() - explosionStartRef.current;
+      const duration = 800;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+
+      // Draw explosion particles
+      explosionParticlesRef.current.forEach(p => {
+        p.x += p.vx * (1 + easeProgress * 2);
+        p.y += p.vy * (1 + easeProgress * 2);
+        p.life = 1 - progress;
+        
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * (1 + easeProgress * 0.5), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${p.r}, ${p.g}, ${p.b}, ${p.life * 0.8})`;
+        ctx.fill();
+      });
+
+      // Expanding event horizon
+      const expandRadius = eventHorizon * (1 + easeProgress * 4);
+      const gradient = ctx.createRadialGradient(
+        centerX, centerY, 0,
+        centerX, centerY, expandRadius
+      );
+      gradient.addColorStop(0, `rgba(0, 0, 0, ${1 - progress})`);
+      gradient.addColorStop(0.7, `rgba(255, 100, 0, ${(1 - progress) * 0.5})`);
+      gradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, expandRadius, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, size, size);
+      
       if (parentIsExploding && explosionStartRef.current) {
-        const elapsed = Date.now() - explosionStartRef.current;
-        const duration = 600; // shorter, snappier explosion
-        const raw = Math.min(elapsed / duration, 1);
-        // ease-out cubic for smoother motion
-        const progress = 1 - Math.pow(1 - raw, 3);
-
-        // Draw explosion particles with eased outward velocity
-        explosionParticlesRef.current.forEach(p => {
-          p.x += p.vx * (0.6 + progress);
-          p.y += p.vy * (0.6 + progress);
-          p.life = 1 - raw;
-          const ctx = Math.random() < 0.5 ? b : f;
+        drawExplosion();
+      } else {
+        // Subtle glow effect on hover
+        if (isHovered) {
+          const pulseGradient = ctx.createRadialGradient(
+            centerX, centerY, 0,
+            centerX, centerY, outerDisk + 20
+          );
+          pulseGradient.addColorStop(0, 'rgba(255, 150, 50, 0)');
+          pulseGradient.addColorStop(0.5, 'rgba(255, 100, 0, 0.05)');
+          pulseGradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+          ctx.fillStyle = pulseGradient;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size * (0.8 + progress), 0, Math.PI * 2);
-          ctx.fillStyle = p.color + p.life + ')';
+          ctx.arc(centerX, centerY, outerDisk + 20, 0, Math.PI * 2);
           ctx.fill();
-        });
-
-        // Expanding black hole circle with eased scale and fade
-        m.beginPath();
-        m.arc(centerX, centerY, blackHoleRadius * (1 + progress * 3), 0, 2 * Math.PI);
-        m.fillStyle = `rgba(0, 0, 0, ${1 - raw})`;
-        m.fill();
-        return;
+        }
+        
+        drawAccretionDisk();
+        drawBlackHole();
       }
-
-      // Draw black hole
-      m.beginPath();
-      m.arc(centerX, centerY, blackHoleRadius, 0, 2 * Math.PI);
-      m.fillStyle = 'rgb(0, 0, 0)';
-      m.fill();
-
-      // Draw particles
-      const speed = isHovered ? 1.5 : 1;
-      for (let i = 0; i < particlesRef.current.length; i++) {
-        particlesRef.current[i].move(centerX, centerY, speed);
-        particlesRef.current[i].show(b, f);
-      }
+      
+      timeRef.current += 1;
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    const loop = () => {
-      b.clearRect(0, 0, size, size);
-      m.clearRect(0, 0, size, size);
-      f.clearRect(0, 0, size, size);
-      draw();
-      animationRef.current = requestAnimationFrame(loop);
-    };
-
-    loop();
+    animate();
 
     return () => {
       if (animationRef.current) {
@@ -196,28 +214,37 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
   useEffect(() => {
     if (parentIsExploding && !explosionStartRef.current) {
       explosionStartRef.current = Date.now();
-      const backCanvas = backCanvasRef.current;
-      const middleCanvas = middleCanvasRef.current;
-      const frontCanvas = frontCanvasRef.current;
-      if (backCanvas && middleCanvas && frontCanvas) {
-        const size = 280;
-        const centerX = size / 2;
-        const centerY = size / 2;
-        // Create explosion particles
+      const canvas = canvasRef.current;
+      if (canvas) {
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        
         explosionParticlesRef.current = [];
-        const explosionCount = isMobile ? 80 : 150;
+        const explosionCount = 200; // Same for both mobile and desktop
+        
         for (let i = 0; i < explosionCount; i++) {
           const angle = Math.random() * Math.PI * 2;
-          const speed = (isMobile ? 0.8 : 1) + Math.random() * (isMobile ? 1.2 : 2);
-          const pSize = (isMobile ? 0.8 : 1) + Math.random() * (isMobile ? 2 : 3);
-          const color = Math.random() < 0.5 ? 'rgba(255,0,255,' : 'rgba(0,255,255,';
+          const speed = 1 + Math.random() * 2;
+          const size = 1 + Math.random() * 3;
+          
+          // Hot plasma colors
+          const colorChoice = Math.random();
+          let r, g, b;
+          if (colorChoice < 0.4) {
+            r = 255; g = 150 + Math.random() * 100; b = 50;
+          } else if (colorChoice < 0.7) {
+            r = 255; g = 50 + Math.random() * 100; b = 50;
+          } else {
+            r = 255; g = 200; b = 100 + Math.random() * 155;
+          }
+          
           explosionParticlesRef.current.push({
             x: centerX,
             y: centerY,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
-            size: pSize,
-            color,
+            size,
+            r, g, b,
             life: 1
           });
         }
@@ -236,32 +263,23 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
 
   if (active !== "home") return null;
 
+  const containerSize = isMobile ? 240 : 300;
+
   return (
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
-      className={`fixed top-1/2 left-1/2 pointer-events-auto z-10 cursor-pointer transition-opacity duration-500 opacity-100`}
+      className="fixed top-1/2 left-1/2 pointer-events-auto z-10 cursor-pointer transition-opacity duration-500 opacity-100"
       style={{ 
-        width: '280px', 
-        height: '280px', 
-         left: '50%',
-         top: '50%',
-        transform: isMobile ? 'translate(-50%, -50%) scale(0.7)' : 'translate(-50%, -50%)'
+        width: `${containerSize}px`, 
+        height: `${containerSize}px`, 
+        transform: 'translate(-50%, -50%)',
+        willChange: 'transform'
       }}
     >
       <canvas
-        ref={backCanvasRef}
-        className="pointer-events-none absolute top-0 left-0"
-        style={{ display: 'block' }}
-      />
-      <canvas
-        ref={middleCanvasRef}
-        className="pointer-events-none absolute top-0 left-0"
-        style={{ display: 'block' }}
-      />
-      <canvas
-        ref={frontCanvasRef}
+        ref={canvasRef}
         className="pointer-events-none absolute top-0 left-0"
         style={{ display: 'block' }}
       />
