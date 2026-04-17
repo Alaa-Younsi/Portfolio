@@ -94,6 +94,9 @@ export default function HomePage() {
       {/* Background stars inside frame */}
       <Background fullScreen={isExploding} />
       
+      {/* Frame - rendered outside fade div so it fades independently */}
+      <Frame isExploding={isExploding} />
+      
       {/* Splash screen */}
       <SplashScreen />
 
@@ -116,7 +119,6 @@ export default function HomePage() {
         <Header active={active} setActive={handleNavigation} />
         {active === "home" && <Hero key={homeClickCount} active={active} />}
         {active === "info" && <About key={aboutClickCount} active={active} />}
-        <Frame active={active} />
         {active === "projects" && <Projects key={projectsClickCount} active={active} />}
         {active === "contact" && <Contact active={active} />}
       </div>

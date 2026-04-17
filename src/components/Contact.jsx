@@ -1,41 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useTypingSequence } from '../hooks/useTypingSequence'
+
+const STRINGS = ['Instagram\u2197', 'X\u2197', 'Contact\u2197']
 
 export default function Contact({ active }) {
-  const [githubText, setGithubText] = useState('')
-  const [leetcodeText, setLeetcodeText] = useState('')
-  const [contactText, setContactText] = useState('')
-
-  const githubString = 'Instagram↗'
-  const leetcodeString = 'X↗'
-  const contactString = 'Contact↗'
-
-  useEffect(() => {
-    if (active !== "contact") return
-
-    // Type Github first
-    if (githubText.length < githubString.length) {
-      const timer = setTimeout(() => {
-        setGithubText(githubString.slice(0, githubText.length + 1))
-      }, 25)
-      return () => clearTimeout(timer)
-    }
-
-    // Then Leetcode
-    if (leetcodeText.length < leetcodeString.length) {
-      const timer = setTimeout(() => {
-        setLeetcodeText(leetcodeString.slice(0, leetcodeText.length + 1))
-      }, 25)
-      return () => clearTimeout(timer)
-    }
-
-    // Then Contact
-    if (contactText.length < contactString.length) {
-      const timer = setTimeout(() => {
-        setContactText(contactString.slice(0, contactText.length + 1))
-      }, 25)
-      return () => clearTimeout(timer)
-    }
-  }, [active, githubText, leetcodeText, contactText])
+  const [githubText, leetcodeText, contactText] = useTypingSequence(STRINGS, active === 'contact')
 
   if (active !== "contact") return null
 
@@ -51,7 +19,7 @@ export default function Contact({ active }) {
           data-text={githubText}
         >
           {githubText}
-          {githubText.length < githubString.length && <span className="cursor-blink">|</span>}
+          {githubText.length < STRINGS[0].length && <span className="cursor-blink">|</span>}
         </a>
       )}
       {leetcodeText && (
@@ -64,7 +32,7 @@ export default function Contact({ active }) {
           data-text={leetcodeText}
         >
           {leetcodeText}
-          {leetcodeText.length < leetcodeString.length && <span className="cursor-blink">|</span>}
+          {leetcodeText.length < STRINGS[1].length && <span className="cursor-blink">|</span>}
         </a>
       )}
       {contactText && (
@@ -77,10 +45,11 @@ export default function Contact({ active }) {
           data-text={contactText}
         >
           {contactText}
-          {contactText.length < contactString.length && <span className="cursor-blink">|</span>}
+          {contactText.length < STRINGS[2].length && <span className="cursor-blink">|</span>}
         </a>
       )}
     </div>
   )
 }
+
 

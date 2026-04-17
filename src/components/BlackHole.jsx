@@ -64,7 +64,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
   const particlesRef = useRef([]);
   const sortedParticlesRef = useRef([]);
   const explosionParticlesRef = useRef([]);
-  const [isHovered, setIsHovered] = useState(false);
+  const isHoveredRef = useRef(false);
   const [isMobile, setIsMobile] = useState(false);
   const explosionStartRef = useRef(null);
   const timeRef = useRef(0);
@@ -120,7 +120,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
         centerX, centerY, eventHorizon + 14,
         centerX, centerY, eventHorizon + 35
       );
-      shimmerGradient.addColorStop(0, `rgba(180,100,30,${isHovered ? 0.28 : 0.15})`);
+      shimmerGradient.addColorStop(0, `rgba(180,100,30,${isHoveredRef.current ? 0.28 : 0.15})`);
       shimmerGradient.addColorStop(1, 'rgba(180,100,30,0)');
       ctx.fillStyle = shimmerGradient;
       ctx.beginPath();
@@ -132,7 +132,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
         centerX, centerY, eventHorizon + 2,
         centerX, centerY, eventHorizon + 14
       );
-      photonGradient.addColorStop(0, `rgba(255,200,80,${isHovered ? 1.0 : 0.9})`);
+      photonGradient.addColorStop(0, `rgba(255,200,80,${isHoveredRef.current ? 1.0 : 0.9})`);
       photonGradient.addColorStop(1, 'rgba(255,80,0,0.0)');
       ctx.fillStyle = photonGradient;
       ctx.beginPath();
@@ -164,7 +164,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
         });
       }
 
-      const speedMult = isHovered ? 1.4 : 1;
+      const speedMult = isHoveredRef.current ? 1.4 : 1;
       sortedParticlesRef.current.forEach(particle => {
         particle.update(speedMult);
         particle.draw(ctx);
@@ -211,7 +211,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
         drawExplosion();
       } else {
         // Enhanced glow effect on hover
-        if (isHovered) {
+        if (isHoveredRef.current) {
           const pulseGradient = ctx.createRadialGradient(
             centerX, centerY, eventHorizon,
             centerX, centerY, outerDisk + 30
@@ -240,7 +240,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [active, isHovered, parentIsExploding, isMobile]);
+  }, [active, parentIsExploding, isMobile]);
 
   useEffect(() => {
     if (parentIsExploding && !explosionStartRef.current) {
@@ -298,8 +298,8 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
 
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => { isHoveredRef.current = true }}
+      onMouseLeave={() => { isHoveredRef.current = false }}
       onClick={handleClick}
       className="fixed top-1/2 left-1/2 pointer-events-auto z-10 cursor-pointer transition-opacity duration-500 opacity-100"
       style={{ 

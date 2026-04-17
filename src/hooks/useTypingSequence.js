@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react'
 // Advances to the next string automatically with a 100 ms inter-string pause.
 export function useTypingSequence(strings, active, speed = 25) {
   const stringsRef = useRef(strings)
+  useEffect(() => { stringsRef.current = strings }, [strings])
 
   const [step, setStep] = useState(0)
   const [typed, setTyped] = useState(() => strings.map(() => ''))

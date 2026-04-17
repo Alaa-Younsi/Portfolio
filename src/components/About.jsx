@@ -76,7 +76,7 @@ export default function Info({ active }) {
           </a>
           {link2Text && (
             <a href="https://leetcode.com/u/alaa-younsi/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit Twitter profile (opens in new tab)"
+               aria-label="Visit LeetCode profile (opens in new tab)"
                className="block text-xs sm:text-sm hover:opacity-50 transition-opacity duration-200 glitch-text" data-text={link2Text}>
               {link2Text}
               {link2Text.length < STRINGS[7].length && <span className="cursor-blink">|</span>}
