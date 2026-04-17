@@ -4,7 +4,8 @@ export default function SplashScreen() { // Rename component
   const [visible, setVisible] = useState(true)
 
   useEffect(() => {
-    setTimeout(() => setVisible(false), 2500)
+    const t = setTimeout(() => setVisible(false), 2500)
+    return () => clearTimeout(t)
   }, [])
 
   if (!visible) return null

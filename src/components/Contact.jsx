@@ -47,7 +47,7 @@ export default function Contact({ active }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Visit GitHub profile (opens in new tab)"
-          className="block text-[clamp(0.7rem,1vw,0.95rem)] font-normal hover:opacity-50 transition-opacity z-20 glitch-text"
+          className="block text-[clamp(0.7rem,1vw,0.95rem)] font-normal hover:opacity-50 transition-opacity duration-200 z-20 glitch-text"
           data-text={githubText}
         >
           {githubText}
@@ -60,7 +60,7 @@ export default function Contact({ active }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Visit LeetCode profile (opens in new tab)"
-          className="block text-[clamp(0.7rem,1vw,0.95rem)] font-normal hover:opacity-50 transition-opacity z-20 glitch-text"
+          className="block text-[clamp(0.7rem,1vw,0.95rem)] font-normal hover:opacity-50 transition-opacity duration-200 z-20 glitch-text"
           data-text={leetcodeText}
         >
           {leetcodeText}
@@ -73,7 +73,7 @@ export default function Contact({ active }) {
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Contact via Linktree (opens in new tab)"
-          className="block text-[clamp(0.7rem,1vw,0.95rem)] font-normal hover:opacity-50 transition-opacity z-20 glitch-text"
+          className="block text-[clamp(0.7rem,1vw,0.95rem)] font-normal hover:opacity-50 transition-opacity duration-200 z-20 glitch-text"
           data-text={contactText}
         >
           {contactText}

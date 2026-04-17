@@ -1,4 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
+import { useTypingSequence } from '../hooks/useTypingSequence'
+
+const LINK_STRINGS = ['DeadSide\u2197', 'SingularityLab\u2197', 'Marlowe\u2197']
 
 export default function Hero({ active }) { // Renamed from Home to Hero for clarity
   const lines = useMemo(() => [
@@ -22,12 +25,9 @@ export default function Hero({ active }) { // Renamed from Home to Hero for clar
   const [currentLineIndex, setCurrentLineIndex] = useState(0)
   const [currentText, setCurrentText] = useState('')
   const [currentCharIndex, setCurrentCharIndex] = useState(0)
-  const [link1Text, setLink1Text] = useState('')
-  const [link2Text, setLink2Text] = useState('')
   const showLinks = true // Show immediately
 
-  const link1String = 'Dead Side↗'
-  const link2String = 'Journey↗'
+  const [link1Text, link2Text, link3Text] = useTypingSequence(LINK_STRINGS, true)
 
   useEffect(() => {
     if (active !== "home") return
@@ -54,24 +54,6 @@ export default function Hero({ active }) { // Renamed from Home to Hero for clar
       return () => clearTimeout(timer)
     }
   }, [currentCharIndex, currentLineIndex, typedLines, lines, active])
-
-  // Type link 1
-  useEffect(() => {
-    if (!showLinks || link1Text.length >= link1String.length) return
-    const timer = setTimeout(() => {
-      setLink1Text(link1String.slice(0, link1Text.length + 1))
-    }, 25)
-    return () => clearTimeout(timer)
-  }, [showLinks, link1Text, link1String])
-
-  // Type link 2 after link 1
-  useEffect(() => {
-    if (!showLinks || link1Text.length < link1String.length || link2Text.length >= link2String.length) return
-    const timer = setTimeout(() => {
-      setLink2Text(link2String.slice(0, link2Text.length + 1))
-    }, 25)
-    return () => clearTimeout(timer)
-  }, [showLinks, link1Text, link2Text, link1String, link2String])
 
   // Don't render when not on home
   if (active !== "home") return null
@@ -109,29 +91,42 @@ export default function Hero({ active }) { // Renamed from Home to Hero for clar
       {showLinks && (
         <div className="absolute bottom-[var(--content-y)] left-[var(--content-x)] text-[var(--fg)] space-y-2 animate-fadeIn">
           {link1Text && (
-            <a 
-              href="https://dead-side-sigma.vercel.app/" 
-              target="_blank" 
+            <a
+              href="https://deadside-blog.vercel.app/"
+              target="_blank"
               rel="noopener noreferrer"
-              aria-label="Visit Dead Side (opens in new tab)"
-              className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity glitch-text" 
+              aria-label="Visit DeadSide (opens in new tab)"
+              className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity duration-200 glitch-text"
               data-text={link1Text}
             >
               {link1Text}
-              {link1Text.length < link1String.length && <span className="cursor-blink">|</span>}
+              {link1Text.length < LINK_STRINGS[0].length && <span className="cursor-blink">|</span>}
             </a>
           )}
-          {link1Text.length >= link1String.length && link2Text && (
-            <a 
-              href="#" 
-              target="_blank" 
+          {link2Text && (
+            <a
+              href="https://singularity-lab-ruddy.vercel.app/"
+              target="_blank"
               rel="noopener noreferrer"
-              aria-label="Visit Journey (opens in new tab)"
-              className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity glitch-text" 
+              aria-label="Visit SingularityLab (opens in new tab)"
+              className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity duration-200 glitch-text"
               data-text={link2Text}
             >
               {link2Text}
-              {link2Text.length < link2String.length && <span className="cursor-blink">|</span>}
+              {link2Text.length < LINK_STRINGS[1].length && <span className="cursor-blink">|</span>}
+            </a>
+          )}
+          {link3Text && (
+            <a
+              href="https://marlowe-newspapers.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Visit Marlowe (opens in new tab)"
+              className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity duration-200 glitch-text"
+              data-text={link3Text}
+            >
+              {link3Text}
+              {link3Text.length < LINK_STRINGS[2].length && <span className="cursor-blink">|</span>}
             </a>
           )}
         </div>

@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet-async";
 import Header from "../components/Header";
 import Hero from "../components/Hero";
 import About from "../components/About";
-import Skills from "../components/Skills";
+import Frame from "../components/Frame";
 import Projects from "../components/Projects";
 import Contact from "../components/Contact";
 import SplashScreen from "../components/SplashScreen";
@@ -12,7 +12,6 @@ import BlackHole from "../components/BlackHole";
 
 export default function HomePage() {
   const [active, setActive] = useState("home");
-  const [isDarkMode, setIsDarkMode] = useState(true);
   const [homeClickCount, setHomeClickCount] = useState(0);
   const [projectsClickCount, setProjectsClickCount] = useState(0);
   const [aboutClickCount, setAboutClickCount] = useState(0);
@@ -36,10 +35,10 @@ export default function HomePage() {
     // Trigger explosion state immediately for a fast, smooth effect
     setIsExploding(true);
 
-    // Show home button after explosion animation completes (~800-900ms)
+    // Show home button after explosion animation completes (~1000ms)
     setTimeout(() => {
       setShowHomeButton(true);
-    }, 900);
+    }, 1000);
   };
 
   const handleRestore = () => {
@@ -51,9 +50,9 @@ export default function HomePage() {
   };
 
   const themeVars = {
-    "--bg": isDarkMode ? "#000" : "#fff",
-    "--fg": isDarkMode ? "#fff" : "#000",
-    "--border": isDarkMode ? "#fff" : "#000",
+    "--bg": "#000",
+    "--fg": "#fff",
+    "--border": "#fff",
     "--frame-x": "clamp(12px, 2.5vw, 32px)",
     "--frame-y": "clamp(16px, 5dvh, 48px)",
     "--content-x": "calc(var(--frame-x) + clamp(10px, 1.5vw, 20px))",
@@ -73,14 +72,14 @@ export default function HomePage() {
         
         {/* Open Graph tags */}
         <meta property="og:type" content="website" />
-        <meta property="og:title" content="Alaa Younsi - Developer & Designer" />
+        <meta property="og:title" content="Alaa Younsi - Problem Solving Enjoyer" />
         <meta property="og:description" content="Alaa Younsi is a developer and designer specializing in website development, design, and server-side services. Explore creative projects and innovative digital solutions." />
         <meta property="og:url" content="https://alaa-younsi.vercel.app" />
         <meta property="og:site_name" content="Alaa Younsi Portfolio" />
         
         {/* Twitter Card tags */}
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Alaa Younsi - Developer & Designer" />
+        <meta name="twitter:title" content="Alaa Younsi - Problem Solving Enjoyer" />
         <meta name="twitter:description" content="Alaa Younsi is a developer and designer specializing in website development, design, and server-side services. Explore creative projects and innovative digital solutions." />
         <meta name="twitter:creator" content="@ashv3il" />
         
@@ -93,21 +92,10 @@ export default function HomePage() {
       </Helmet>
 
       {/* Background stars inside frame */}
-      <Background isDarkMode={isDarkMode} fullScreen={isExploding} />
+      <Background fullScreen={isExploding} />
       
       {/* Splash screen */}
       <SplashScreen />
-
-      <button
-        type="button"
-        onClick={() => setIsDarkMode((v) => !v)}
-        aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-        className={`fixed right-[var(--content-x)] sm:left-1/2 sm:-translate-x-1/2 sm:right-auto top-[var(--content-y)] z-20 border border-[var(--border)] text-[var(--fg)] px-2 py-0.5 sm:px-3 sm:py-1 text-[0.65rem] sm:text-xs font-normal tracking-wide transition-opacity ${
-          isExploding ? 'opacity-0 pointer-events-none' : 'opacity-100'
-        }`}
-      >
-        {isDarkMode ? "Dark" : "Light"}
-      </button>
 
       {/* Home restore button */}
       {showHomeButton && (
@@ -116,22 +104,19 @@ export default function HomePage() {
           onClick={handleRestore}
           aria-label="Restore home"
           className="fixed right-[var(--content-x)] sm:left-1/2 sm:-translate-x-1/2 sm:right-auto top-[var(--content-y)] z-20 border border-[var(--border)] text-[var(--fg)] px-2 py-0.5 sm:px-3 sm:py-1 text-[0.65rem] sm:text-xs font-normal tracking-wide animate-[fadeIn_0.5s_ease-in-out]"
-          style={{
-            animation: 'fadeIn 0.5s ease-in-out'
-          }}
         >
           Home
         </button>
       )}
       
       {/* UI Components */}
-      <div className={`transition-opacity duration-150 ${
+      <div className={`transition-opacity duration-[400ms] ${
         isExploding ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}>
         <Header active={active} setActive={handleNavigation} />
         {active === "home" && <Hero key={homeClickCount} active={active} />}
         {active === "info" && <About key={aboutClickCount} active={active} />}
-        <Skills active={active} />
+        <Frame active={active} />
         {active === "projects" && <Projects key={projectsClickCount} active={active} />}
         {active === "contact" && <Contact active={active} />}
       </div>

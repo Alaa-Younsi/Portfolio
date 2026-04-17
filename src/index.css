@@ -14,6 +14,8 @@
 
 body {
   background-color: black;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 @keyframes glitch {
@@ -207,12 +209,6 @@ body {
   }
 }
 
-
-/* Smooth transitions — opacity only; excluding transform keeps mobile scroll
-   on the compositor thread and prevents repaints on every scroll frame. */
-* {
-  transition: opacity 0.2s ease;
-}
 
 /* Performance optimizations */
 canvas {

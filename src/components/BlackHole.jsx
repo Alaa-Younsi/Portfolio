@@ -36,8 +36,8 @@ class DiskParticle {
     this.verticalOffset = Math.sin(this.angle) * this.radius * 0.15;
   }
   
-  update() {
-    this.angle += this.speed * 0.01;
+  update(speedMultiplier = 1) {
+    this.angle += this.speed * 0.01 * speedMultiplier;
     if (this.angle > Math.PI * 2) this.angle -= Math.PI * 2;
   }
   
@@ -62,6 +62,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
   const canvasRef = useRef(null);
   const animationRef = useRef(null);
   const particlesRef = useRef([]);
+  const sortedParticlesRef = useRef([]);
   const explosionParticlesRef = useRef([]);
   const [isHovered, setIsHovered] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -93,7 +94,7 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
     const centerX = size / 2;
     const centerY = size / 2;
     const scale = size / 300; // Scale factor based on desktop size
-    const eventHorizon = 30 * scale; // Event horizon radius
+    const eventHorizon = 34 * scale; // Event horizon radius
     const innerDisk = 50 * scale;
     const outerDisk = 130 * scale;
 
@@ -104,38 +105,68 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
       for (let i = 0; i < particleCount; i++) {
         particlesRef.current.push(new DiskParticle(centerX, centerY, innerDisk, outerDisk));
       }
+      // Initial sort — re-used every 10 frames inside drawAccretionDisk
+      sortedParticlesRef.current = [...particlesRef.current];
+      sortedParticlesRef.current.sort((a, b) => {
+        const yA = centerY + Math.sin(a.angle) * a.radius * 0.3 + a.verticalOffset;
+        const yB = centerY + Math.sin(b.angle) * b.radius * 0.3 + b.verticalOffset;
+        return yA - yB;
+      });
     }
 
     const drawBlackHole = () => {
-      // Photon sphere glow (gravitational lensing effect) - drawn first
-      const gradient = ctx.createRadialGradient(
-        centerX, centerY, eventHorizon,
-        centerX, centerY, eventHorizon + 8
+      // --- 1. Gravitational lensing shimmer (widest halo, drawn first) ---
+      const shimmerGradient = ctx.createRadialGradient(
+        centerX, centerY, eventHorizon + 14,
+        centerX, centerY, eventHorizon + 35
       );
-      gradient.addColorStop(0, 'rgba(255, 150, 50, 0.3)');
-      gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
-      ctx.fillStyle = gradient;
+      shimmerGradient.addColorStop(0, `rgba(180,100,30,${isHovered ? 0.28 : 0.15})`);
+      shimmerGradient.addColorStop(1, 'rgba(180,100,30,0)');
+      ctx.fillStyle = shimmerGradient;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, eventHorizon + 8, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, eventHorizon + 35, 0, Math.PI * 2);
       ctx.fill();
-      
-      // Event horizon (pure black) - drawn on top to ensure it's fully black
-      ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+
+      // --- 2. Photon ring (drawn before event horizon so the black hole occludes the inner half) ---
+      const photonGradient = ctx.createRadialGradient(
+        centerX, centerY, eventHorizon + 2,
+        centerX, centerY, eventHorizon + 14
+      );
+      photonGradient.addColorStop(0, `rgba(255,200,80,${isHovered ? 1.0 : 0.9})`);
+      photonGradient.addColorStop(1, 'rgba(255,80,0,0.0)');
+      ctx.fillStyle = photonGradient;
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, eventHorizon + 14, 0, Math.PI * 2);
+      ctx.fill();
+
+      // --- 3. Event horizon with subtle depth gradient ---
+      const horizonGradient = ctx.createRadialGradient(
+        centerX, centerY, 0,
+        centerX, centerY, eventHorizon
+      );
+      horizonGradient.addColorStop(0, 'rgba(10,5,5,1)');
+      horizonGradient.addColorStop(1, 'rgba(0,0,0,1)');
+      ctx.fillStyle = horizonGradient;
       ctx.beginPath();
       ctx.arc(centerX, centerY, eventHorizon, 0, Math.PI * 2);
       ctx.fill();
     };
 
     const drawAccretionDisk = () => {
-      // Draw particles (sorted by Y for proper layering)
-      const sorted = [...particlesRef.current].sort((a, b) => {
-        const yA = centerY + Math.sin(a.angle) * a.radius * 0.3 + a.verticalOffset;
-        const yB = centerY + Math.sin(b.angle) * b.radius * 0.3 + b.verticalOffset;
-        return yA - yB;
-      });
-      
-      sorted.forEach(particle => {
-        particle.update();
+      // Re-sort in-place every 10 frames — avoids the cost of sorting 400
+      // particles on every single animation frame (was also allocating a new
+      // array each time via spread).  A 10-frame stale order is imperceptible.
+      if (timeRef.current % 10 === 0) {
+        sortedParticlesRef.current.sort((a, b) => {
+          const yA = centerY + Math.sin(a.angle) * a.radius * 0.3 + a.verticalOffset;
+          const yB = centerY + Math.sin(b.angle) * b.radius * 0.3 + b.verticalOffset;
+          return yA - yB;
+        });
+      }
+
+      const speedMult = isHovered ? 1.4 : 1;
+      sortedParticlesRef.current.forEach(particle => {
+        particle.update(speedMult);
         particle.draw(ctx);
       });
     };
@@ -179,18 +210,18 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
       if (parentIsExploding && explosionStartRef.current) {
         drawExplosion();
       } else {
-        // Subtle glow effect on hover
+        // Enhanced glow effect on hover
         if (isHovered) {
           const pulseGradient = ctx.createRadialGradient(
-            centerX, centerY, 0,
-            centerX, centerY, outerDisk + 20
+            centerX, centerY, eventHorizon,
+            centerX, centerY, outerDisk + 30
           );
-          pulseGradient.addColorStop(0, 'rgba(255, 150, 50, 0)');
-          pulseGradient.addColorStop(0.5, 'rgba(255, 100, 0, 0.05)');
-          pulseGradient.addColorStop(1, 'rgba(255, 0, 0, 0)');
+          pulseGradient.addColorStop(0,   'rgba(255,150,50,0.14)');
+          pulseGradient.addColorStop(0.35, 'rgba(255,100,0,0.09)');
+          pulseGradient.addColorStop(1,   'rgba(255,0,0,0)');
           ctx.fillStyle = pulseGradient;
           ctx.beginPath();
-          ctx.arc(centerX, centerY, outerDisk + 20, 0, Math.PI * 2);
+          ctx.arc(centerX, centerY, outerDisk + 30, 0, Math.PI * 2);
           ctx.fill();
         }
         
@@ -274,7 +305,8 @@ export default function BlackHole({ active, onExplode, isExploding: parentIsExpl
       style={{ 
         width: `${containerSize}px`, 
         height: `${containerSize}px`, 
-        transform: 'translate(-50%, -50%)',
+        transform: `translate(-50%, -50%) scale(${parentIsExploding ? 1.15 : 1})`,
+        transition: 'transform 300ms ease-out',
         willChange: 'transform'
       }}
     >

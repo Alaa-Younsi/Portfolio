@@ -1,131 +1,22 @@
-import { useState, useEffect } from 'react'
+﻿import { useTypingSequence } from '../hooks/useTypingSequence'
+
+const STRINGS = [
+  '\u25a0 Things that i can do',
+  'I can do all sorts of digital services.',
+  '\u25cf Software Engineering & AI Systems',
+  'Full-stack web development, AI SaaS agents, automation, Linux, networking, and security.',
+  '\u25cf Design, Content & Growth',
+  'UI/UX design, visual content creation, and performance-driven digital marketing for products and brands.',
+  'GitHub\u2197',
+  'LeetCode\u2197',
+]
 
 export default function Info({ active }) {
-  const [titleText, setTitleText] = useState('')
-  const [descText, setDescText] = useState('')
-  const [frontEndLabel, setFrontEndLabel] = useState('')
-  const [frontEndSkills, setFrontEndSkills] = useState('')
-  const [backEndLabel, setBackEndLabel] = useState('')
-  const [backEndSkills, setBackEndSkills] = useState('')
-  const [link1Text, setLink1Text] = useState('')
-  const [link2Text, setLink2Text] = useState('')
-  const [currentStep, setCurrentStep] = useState(0)
+  const typed = useTypingSequence(STRINGS, active === 'info')
 
-  const titleString = '\u25a0 Things that i can do'
-  const descString = 'I can do all sorts of digital services.'
-  const frontEndLabelString = '\u25cf Software Engineering & AI Systems'
-  const frontEndSkillsString = 'Full-stack web development, AI SaaS agents, automation, Linux, networking, and security fundamentals.'
-  const backEndLabelString = '\u25cf Design, Content & Growth'
-  const backEndSkillsString = 'UI/UX design, visual content creation, and performance-driven digital marketing for products and brands.'
-  const link1String = 'GitHub\u2197'
-  const link2String = 'Leetcode\u2197'
+  if (active !== 'info') return null
 
-  useEffect(() => {
-    if (active !== "info") return
-
-    // Step 0: Type title
-    if (currentStep === 0) {
-      if (titleText.length < titleString.length) {
-        const timer = setTimeout(() => {
-          setTitleText(titleString.slice(0, titleText.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(1), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 1: Type description
-    if (currentStep === 1) {
-      if (descText.length < descString.length) {
-        const timer = setTimeout(() => {
-          setDescText(descString.slice(0, descText.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(2), 150)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 2: Type front-end label
-    if (currentStep === 2) {
-      if (frontEndLabel.length < frontEndLabelString.length) {
-        const timer = setTimeout(() => {
-          setFrontEndLabel(frontEndLabelString.slice(0, frontEndLabel.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(3), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 3: Type front-end skills
-    if (currentStep === 3) {
-      if (frontEndSkills.length < frontEndSkillsString.length) {
-        const timer = setTimeout(() => {
-          setFrontEndSkills(frontEndSkillsString.slice(0, frontEndSkills.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(4), 150)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 4: Type back-end label
-    if (currentStep === 4) {
-      if (backEndLabel.length < backEndLabelString.length) {
-        const timer = setTimeout(() => {
-          setBackEndLabel(backEndLabelString.slice(0, backEndLabel.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(5), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 5: Type back-end skills
-    if (currentStep === 5) {
-      if (backEndSkills.length < backEndSkillsString.length) {
-        const timer = setTimeout(() => {
-          setBackEndSkills(backEndSkillsString.slice(0, backEndSkills.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(6), 150)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 6: Type link 1
-    if (currentStep === 6) {
-      if (link1Text.length < link1String.length) {
-        const timer = setTimeout(() => {
-          setLink1Text(link1String.slice(0, link1Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(7), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 7: Type link 2
-    if (currentStep === 7) {
-      if (link2Text.length < link2String.length) {
-        const timer = setTimeout(() => {
-          setLink2Text(link2String.slice(0, link2Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      }
-    }
-  }, [active, currentStep, titleText, descText, frontEndLabel, frontEndSkills, backEndLabel, backEndSkills, link1Text, link2Text])
-
-  if (active !== "info") return null
+  const [titleText, descText, frontEndLabel, frontEndSkills, backEndLabel, backEndSkills, link1Text, link2Text] = typed
 
   return (
     <>
@@ -133,44 +24,40 @@ export default function Info({ active }) {
         {titleText && (
           <h2 id="about-heading" className="text-[0.6rem] sm:text-[clamp(0.7rem,1vw,0.9rem)] font-normal opacity-80 glitch-text" data-text={titleText}>
             {titleText}
-            {titleText.length < titleString.length && <span className="cursor-blink">|</span>}
+            {titleText.length < STRINGS[0].length && <span className="cursor-blink">|</span>}
           </h2>
         )}
 
-        {currentStep >= 1 && descText && (
+        {descText && (
           <p className="mt-4 text-[0.75rem] sm:text-[clamp(0.9rem,1.25vw,1.05rem)] leading-relaxed glitch-text" data-text={descText}>
             {descText}
-            {descText.length < descString.length && currentStep === 1 && <span className="cursor-blink">|</span>}
+            {descText.length < STRINGS[1].length && <span className="cursor-blink">|</span>}
           </p>
         )}
 
-        {currentStep >= 2 && (
+        {frontEndLabel && (
           <div className="mt-6 sm:mt-8 text-left max-w-xs sm:max-w-sm mx-auto">
-            {frontEndLabel && (
-              <p className="text-[0.6rem] sm:text-[clamp(0.7rem,1vw,0.9rem)] font-normal mt-3 sm:mt-4 opacity-80 glitch-text" data-text={frontEndLabel}>
-                {frontEndLabel}
-                {frontEndLabel.length < frontEndLabelString.length && currentStep === 2 && <span className="cursor-blink">|</span>}
-              </p>
-            )}
-            {currentStep >= 3 && frontEndSkills && (
+            <p className="text-[0.6rem] sm:text-[clamp(0.7rem,1vw,0.9rem)] font-normal mt-3 sm:mt-4 opacity-80 glitch-text" data-text={frontEndLabel}>
+              {frontEndLabel}
+              {frontEndLabel.length < STRINGS[2].length && <span className="cursor-blink">|</span>}
+            </p>
+            {frontEndSkills && (
               <p className="text-[0.75rem] sm:text-[clamp(0.9rem,1.25vw,1.05rem)] mt-1 glitch-text" data-text={frontEndSkills}>
                 {frontEndSkills}
-                {frontEndSkills.length < frontEndSkillsString.length && currentStep === 3 && <span className="cursor-blink">|</span>}
+                {frontEndSkills.length < STRINGS[3].length && <span className="cursor-blink">|</span>}
               </p>
             )}
 
-            {currentStep >= 4 && (
+            {backEndLabel && (
               <>
-                {backEndLabel && (
-                  <p className="text-[0.6rem] sm:text-[clamp(0.7rem,1vw,0.9rem)] font-normal mt-3 sm:mt-4 opacity-80 glitch-text" data-text={backEndLabel}>
-                    {backEndLabel}
-                    {backEndLabel.length < backEndLabelString.length && currentStep === 4 && <span className="cursor-blink">|</span>}
-                  </p>
-                )}
-                {currentStep >= 5 && backEndSkills && (
+                <p className="text-[0.6rem] sm:text-[clamp(0.7rem,1vw,0.9rem)] font-normal mt-3 sm:mt-4 opacity-80 glitch-text" data-text={backEndLabel}>
+                  {backEndLabel}
+                  {backEndLabel.length < STRINGS[4].length && <span className="cursor-blink">|</span>}
+                </p>
+                {backEndSkills && (
                   <p className="text-[0.75rem] sm:text-[clamp(0.9rem,1.25vw,1.05rem)] mt-1 glitch-text" data-text={backEndSkills}>
                     {backEndSkills}
-                    {backEndSkills.length < backEndSkillsString.length && currentStep === 5 && <span className="cursor-blink">|</span>}
+                    {backEndSkills.length < STRINGS[5].length && <span className="cursor-blink">|</span>}
                   </p>
                 )}
               </>
@@ -179,22 +66,20 @@ export default function Info({ active }) {
         )}
       </section>
 
-      {currentStep >= 6 && (
+      {link1Text && (
         <div className="absolute bottom-[var(--content-y)] right-[var(--content-x)] text-[var(--fg)] space-y-2 text-right">
-          {link1Text && (
-            <a href="https://github.com/Alaa-Younsi" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit GitHub profile (opens in new tab)"
-               className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity glitch-text" data-text={link1Text}>
-              {link1Text}
-              {link1Text.length < link1String.length && currentStep === 6 && <span className="cursor-blink">|</span>}
-            </a>
-          )}
-          {currentStep >= 7 && link2Text && (
+          <a href="https://github.com/Alaa-Younsi" target="_blank" rel="noopener noreferrer"
+             aria-label="Visit GitHub profile (opens in new tab)"
+             className="block text-[clamp(0.7rem,1vw,0.9rem)] hover:opacity-50 transition-opacity duration-200 glitch-text" data-text={link1Text}>
+            {link1Text}
+            {link1Text.length < STRINGS[6].length && <span className="cursor-blink">|</span>}
+          </a>
+          {link2Text && (
             <a href="https://leetcode.com/u/alaa-younsi/" target="_blank" rel="noopener noreferrer"
                aria-label="Visit Twitter profile (opens in new tab)"
-               className="block text-xs sm:text-sm hover:opacity-50 transition-opacity glitch-text" data-text={link2Text}>
+               className="block text-xs sm:text-sm hover:opacity-50 transition-opacity duration-200 glitch-text" data-text={link2Text}>
               {link2Text}
-              {link2Text.length < link2String.length && currentStep === 7 && <span className="cursor-blink">|</span>}
+              {link2Text.length < STRINGS[7].length && <span className="cursor-blink">|</span>}
             </a>
           )}
         </div>
@@ -202,3 +87,4 @@ export default function Info({ active }) {
     </>
   )
 }
+

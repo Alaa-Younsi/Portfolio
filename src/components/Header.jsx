@@ -4,7 +4,7 @@ export default function Header({ active, setActive }) {
       onClick={() => setActive(id)}
       aria-label={`Navigate to ${label}`}
       aria-current={active === id ? "page" : undefined}
-      className="block text-left text-[var(--fg)] font-normal hover:opacity-50 transition-opacity text-[clamp(0.7rem,1vw,1rem)]"
+      className="block text-left text-[var(--fg)] font-normal hover:opacity-50 transition-opacity duration-200 text-[clamp(0.7rem,1vw,1rem)]"
     >
       {active === id ? "●" : label}
     </button>

@@ -1,282 +1,41 @@
-import { useState, useEffect } from 'react'
+﻿import { useTypingSequence } from '../hooks/useTypingSequence'
+
+const PROJECTS = [
+  { meta: '2026 / Comission / Company',    title: 'Afia Export',      url: 'https://www.afiaexport.com/',              label: 'Visit Afia Export project (opens in new tab)' },
+  { meta: '2026 / Comission / Online Store',  title: 'VintageDZ', url: 'https://vintagedz.vercel.app/',                label: 'Visit Vintagedz project (opens in new tab)' },
+  { meta: '2026 / Comission / Platform',    title: 'Supremease',   url: 'https://supremease1-0.vercel.app/',           label: 'Visit Supremease project (opens in new tab)' },
+  { meta: '2026 / Comission / Platform',       title: 'DentaBot',    url: 'https://denta-bot1-0.vercel.app/',          label: 'Visit DentaBot project (opens in new tab)' },
+  { meta: '2026 / Personal / Playground', title: 'CPlayground',  url: 'https://c-playground-web-edition.vercel.app/',  label: 'Visit CPlayground project (opens in new tab)' },
+  { meta: '2025 / Comission / Agency',        title: 'MYB Agency',  url: 'https://www.mind-yb.com/',                   label: 'Visit MYB Agency project (opens in new tab)' },
+  { meta: '2024 / Personal / Agency',    title: 'SkyWeb Media',  url: 'https://sky-web-media.vercel.app/',             label: 'Visit SkyWeb Media project (opens in new tab)' },
+  { meta: '2023 / Personal / Restaurant',       title: 'Temple Tacos',    url: 'https://temple-tacos.vercel.app/',     label: 'Visit Temple Tacos project (opens in new tab)' },
+  { meta: '2023 / Comission / School',     title: 'ENK School',       url: 'https://enk-school.vercel.app/',           label: 'Visit ENK School project (opens in new tab)' },
+]
+
+const TITLE_STRING = '\u25a0 Development & Design Projects'
+// Flat order: [title, p0.meta, p0.title, p1.meta, p1.title, ...]
+const ALL_STRINGS = [TITLE_STRING, ...PROJECTS.flatMap(p => [p.meta, p.title])]
 
 export default function Projects({ active }) {
-  const [titleText, setTitleText] = useState('')
-  const [project1Text, setProject1Text] = useState('')
-  const [project1Title, setProject1Title] = useState('')
-  const [project2Text, setProject2Text] = useState('')
-  const [project2Title, setProject2Title] = useState('')
-  const [project3Text, setProject3Text] = useState('')
-  const [project3Title, setProject3Title] = useState('')
-  const [project4Text, setProject4Text] = useState('')
-  const [project4Title, setProject4Title] = useState('')
-  const [project5Text, setProject5Text] = useState('')
-  const [project5Title, setProject5Title] = useState('')
-  const [project6Text, setProject6Text] = useState('')
-  const [project6Title, setProject6Title] = useState('')
-  const [project7Text, setProject7Text] = useState('')
-  const [project7Title, setProject7Title] = useState('')
-  const [project8Text, setProject8Text] = useState('')
-  const [project8Title, setProject8Title] = useState('')
-  const [currentStep, setCurrentStep] = useState(0)
+  const typed = useTypingSequence(ALL_STRINGS, active === 'projects')
 
-  const titleString = '■ Development & Design Projects'
-  const p1TextString = '2026 / Personal / ADS Platform'
-  const p1TitleString = 'AdCampaign Pro'
-  const p2TextString = '2026 / Personal / Playground'
-  const p2TitleString = 'CPlayground'
-  const p3TextString = '2026 / Comission / Agency'
-  const p3TitleString = 'MYB Agency'
-  const p4TextString = '2025 / Comission / Online Store'
-  const p4TitleString = 'Northernwest'
-  const p5TextString = '2024 / Personal / Agency'
-  const p5TitleString = 'SkyWeb Media'
-  const p6TextString = '2024 / Personal / Restaurant'
-  const p6TitleString = 'Temple Tacos'
-  const p7TextString = '2023 / Comission / School'
-  const p7TitleString = 'ENK School'
-  const p8TextString = '2023 / Personal / Portfolio'
-  const p8TitleString = 'Marlowe'
-
-  useEffect(() => {
-    if (active !== "projects") return
-
-    // Step 0: Type title
-    if (currentStep === 0) {
-      if (titleText.length < titleString.length) {
-        const timer = setTimeout(() => {
-          setTitleText(titleString.slice(0, titleText.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(1), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 1: Type project 1 text
-    if (currentStep === 1) {
-      if (project1Text.length < p1TextString.length) {
-        const timer = setTimeout(() => {
-          setProject1Text(p1TextString.slice(0, project1Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(2), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 2: Type project 1 title
-    if (currentStep === 2) {
-      if (project1Title.length < p1TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject1Title(p1TitleString.slice(0, project1Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(3), 200)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 3: Type project 2 text
-    if (currentStep === 3) {
-      if (project2Text.length < p2TextString.length) {
-        const timer = setTimeout(() => {
-          setProject2Text(p2TextString.slice(0, project2Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(4), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 4: Type project 2 title
-    if (currentStep === 4) {
-      if (project2Title.length < p2TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject2Title(p2TitleString.slice(0, project2Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(5), 200)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 5: Type project 3 text
-    if (currentStep === 5) {
-      if (project3Text.length < p3TextString.length) {
-        const timer = setTimeout(() => {
-          setProject3Text(p3TextString.slice(0, project3Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(6), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 6: Type project 3 title
-    if (currentStep === 6) {
-      if (project3Title.length < p3TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject3Title(p3TitleString.slice(0, project3Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(7), 200)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 7: Type project 4 text
-    if (currentStep === 7) {
-      if (project4Text.length < p4TextString.length) {
-        const timer = setTimeout(() => {
-          setProject4Text(p4TextString.slice(0, project4Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(8), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 8: Type project 4 title
-    if (currentStep === 8) {
-      if (project4Title.length < p4TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject4Title(p4TitleString.slice(0, project4Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(9), 200)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 9: Type project 5 text
-    if (currentStep === 9) {
-      if (project5Text.length < p5TextString.length) {
-        const timer = setTimeout(() => {
-          setProject5Text(p5TextString.slice(0, project5Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(10), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 10: Type project 5 title
-    if (currentStep === 10) {
-      if (project5Title.length < p5TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject5Title(p5TitleString.slice(0, project5Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(11), 200)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 11: Type project 6 text
-    if (currentStep === 11) {
-      if (project6Text.length < p6TextString.length) {
-        const timer = setTimeout(() => {
-          setProject6Text(p6TextString.slice(0, project6Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(12), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 12: Type project 6 title
-    if (currentStep === 12) {
-      if (project6Title.length < p6TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject6Title(p6TitleString.slice(0, project6Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(13), 200)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 13: Type project 7 text
-    if (currentStep === 13) {
-      if (project7Text.length < p7TextString.length) {
-        const timer = setTimeout(() => {
-          setProject7Text(p7TextString.slice(0, project7Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(14), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 14: Type project 7 title
-    if (currentStep === 14) {
-      if (project7Title.length < p7TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject7Title(p7TitleString.slice(0, project7Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(15), 200)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 15: Type project 8 text
-    if (currentStep === 15) {
-      if (project8Text.length < p8TextString.length) {
-        const timer = setTimeout(() => {
-          setProject8Text(p8TextString.slice(0, project8Text.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      } else {
-        const timer = setTimeout(() => setCurrentStep(16), 100)
-        return () => clearTimeout(timer)
-      }
-    }
-
-    // Step 16: Type project 8 title
-    if (currentStep === 16) {
-      if (project8Title.length < p8TitleString.length) {
-        const timer = setTimeout(() => {
-          setProject8Title(p8TitleString.slice(0, project8Title.length + 1))
-        }, 25)
-        return () => clearTimeout(timer)
-      }
-    }
-  }, [active, currentStep, titleText, project1Text, project1Title, project2Text, project2Title, project3Text, project3Title, project4Text, project4Title, project5Text, project5Title, project6Text, project6Title, project7Text, project7Title, project8Text, project8Title])
-
-  if (active !== "projects") return null
+  if (active !== 'projects') return null
 
   return (
-    <section 
-      aria-labelledby="projects-heading" 
+    <section
+      aria-labelledby="projects-heading"
       className="absolute top-[var(--section-top)] right-[var(--content-x)] max-w-[min(90vw,40rem)] text-right text-[var(--fg)] z-30 overflow-hidden"
       style={{ maxHeight: 'calc(100dvh - var(--section-top) - var(--frame-y))', touchAction: 'pan-y' }}
     >
-      {titleText && (
-        <h2 id="projects-heading" className="text-xs sm:text-sm mb-4 sm:mb-6 opacity-80 glitch-text" data-text={titleText}>
-          {titleText}
-          {titleText.length < titleString.length && <span className="cursor-blink">|</span>}
+      {typed[0] && (
+        <h2 id="projects-heading" className="text-xs sm:text-sm mb-4 sm:mb-6 opacity-80 glitch-text" data-text={typed[0]}>
+          {typed[0]}
+          {typed[0].length < TITLE_STRING.length && <span className="cursor-blink">|</span>}
         </h2>
       )}
 
-      {currentStep >= 1 && (
-        <div 
+      {typed[1] && (
+        <div
           className="max-h-[calc(100dvh-var(--section-top)-var(--frame-y)-3rem)] sm:max-h-[calc(100dvh-var(--section-top)-var(--frame-y)-4rem)] overflow-y-auto scrollbar-hide overscroll-contain pr-1"
           style={{
             WebkitOverflowScrolling: 'touch',
@@ -285,157 +44,40 @@ export default function Projects({ active }) {
             willChange: 'scroll-position',
           }}
         >
-          <a href="https://ads-platform-frontend-psi.vercel.app/login" target="_blank" rel="noopener noreferrer"
-             aria-label="Visit AdCampaign Pro project (opens in new tab)"
-             className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
-            {project1Text && (
-              <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project1Text}>
-                {project1Text}
-                {project1Text.length < p1TextString.length && currentStep === 1 && <span className="cursor-blink">|</span>}
-              </p>
-            )}
-            {project1Title && (
-              <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project1Title}>
-                {project1Title}
-                {project1Title.length < p1TitleString.length && currentStep === 2 && <span className="cursor-blink">|</span>}
-              </p>
-            )}
-          </a>
+          {PROJECTS.map((project, i) => {
+            const metaIdx  = 1 + i * 2
+            const titleIdx = 2 + i * 2
+            const metaText  = typed[metaIdx]
+            const titleText = typed[titleIdx]
 
-          {currentStep >= 3 && (
-            <a href="https://c-playground-web-edition.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit CPlayground project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
-              {project2Text && (
-                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project2Text}>
-                  {project2Text}
-                  {project2Text.length < p2TextString.length && currentStep === 3 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-              {project2Title && (
-                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project2Title}>
-                  {project2Title}
-                  {project2Title.length < p2TitleString.length && currentStep === 4 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-            </a>
-          )}
+            if (!metaText) return null
 
-          {currentStep >= 5 && (
-            <a href="https://mind-your-business-agency.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit MYB Agency project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
-              {project3Text && (
-                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project3Text}>
-                  {project3Text}
-                  {project3Text.length < p3TextString.length && currentStep === 5 && <span className="cursor-blink">|</span>}
+            const isLast = i === PROJECTS.length - 1
+            return (
+              <a
+                key={project.url}
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={project.label}
+                className={`block hover:opacity-50 transition-opacity duration-200${isLast ? '' : ' mb-6 sm:mb-8'}`}
+              >
+                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={metaText}>
+                  {metaText}
+                  {metaText.length < project.meta.length && <span className="cursor-blink">|</span>}
                 </p>
-              )}
-              {project3Title && (
-                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project3Title}>
-                  {project3Title}
-                  {project3Title.length < p3TitleString.length && currentStep === 6 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-            </a>
-          )}
-
-          {currentStep >= 7 && (
-            <a href="https://northernwest.shop/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit Northernwest project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
-              {project4Text && (
-                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project4Text}>
-                  {project4Text}
-                  {project4Text.length < p4TextString.length && currentStep === 7 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-              {project4Title && (
-                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project4Title}>
-                  {project4Title}
-                  {project4Title.length < p4TitleString.length && currentStep === 8 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-            </a>
-          )}
-
-          {currentStep >= 9 && (
-            <a href="https://sky-web-media.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit SkyWeb Media project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
-              {project5Text && (
-                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project5Text}>
-                  {project5Text}
-                  {project5Text.length < p5TextString.length && currentStep === 9 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-              {project5Title && (
-                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project5Title}>
-                  {project5Title}
-                  {project5Title.length < p5TitleString.length && currentStep === 10 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-            </a>
-          )}
-
-          {currentStep >= 11 && (
-            <a href="https://temple-tacos.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit Temple Tacos project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
-              {project6Text && (
-                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project6Text}>
-                  {project6Text}
-                  {project6Text.length < p6TextString.length && currentStep === 11 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-              {project6Title && (
-                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project6Title}>
-                  {project6Title}
-                  {project6Title.length < p6TitleString.length && currentStep === 12 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-            </a>
-          )}
-
-          {currentStep >= 13 && (
-            <a href="https://enk-school.vercel.app/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit ENK School project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity mb-6 sm:mb-8">
-              {project7Text && (
-                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project7Text}>
-                  {project7Text}
-                  {project7Text.length < p7TextString.length && currentStep === 13 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-              {project7Title && (
-                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project7Title}>
-                  {project7Title}
-                  {project7Title.length < p7TitleString.length && currentStep === 14 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-            </a>
-          )}
-
-          {currentStep >= 15 && (
-            <a href="https://alaa-younsi.github.io/Marlowe-5.0/" target="_blank" rel="noopener noreferrer"
-               aria-label="Visit Marlowe project (opens in new tab)"
-               className="block hover:opacity-50 transition-opacity">
-              {project8Text && (
-                <p className="text-xs sm:text-sm font-normal mb-1 glitch-text" data-text={project8Text}>
-                  {project8Text}
-                  {project8Text.length < p8TextString.length && currentStep === 15 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-              {project8Title && (
-                <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={project8Title}>
-                  {project8Title}
-                  {project8Title.length < p8TitleString.length && currentStep === 16 && <span className="cursor-blink">|</span>}
-                </p>
-              )}
-            </a>
-          )}
+                {titleText && (
+                  <p className="text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight glitch-text whitespace-nowrap" data-text={titleText}>
+                    {titleText}
+                    {titleText.length < project.title.length && <span className="cursor-blink">|</span>}
+                  </p>
+                )}
+              </a>
+            )
+          })}
         </div>
       )}
     </section>
   )
 }
+
