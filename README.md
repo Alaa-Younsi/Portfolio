@@ -1,18 +1,18 @@
 # Alaa Younsi — Portfolio
 
-## 🌐 Live
+## Live
 
 **[https://alaa-younsi.vercel.app](https://alaa-younsi.vercel.app)**
 
 ---
 
-## 📋 Overview
+## Overview
 
 My current main portfolio. A framed, interstellar-themed single-page application built entirely from scratch with React and Vite — no UI libraries, no component frameworks. Every animation, every interactive element is hand-coded. The design philosophy is minimal, dark, and typographic: white borders on black, monospace text, physics-based particles, and a scientifically-inspired black hole as the centrepiece.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 ![Homepage](./screenshots/screenshot1.png)
 ![Services Section](./screenshots/screenshot2.png)
@@ -24,7 +24,7 @@ My current main portfolio. A framed, interstellar-themed single-page application
 
 ---
 
-## 🚀 Tech Stack
+## Tech Stack
 
 ### Core
 | Technology | Version | Role |
@@ -53,7 +53,7 @@ My current main portfolio. A framed, interstellar-themed single-page application
 
 ---
 
-## ✨ Features
+## Features
 
 ### Layout & Design
 - **Framed card UI** — white border frame on full-viewport black background, consistent on all screen sizes
@@ -80,7 +80,7 @@ My current main portfolio. A framed, interstellar-themed single-page application
 
 ---
 
-## 🏗️ Project Structure
+## Project Structure
 
 ```
 portfolio 1.2/
@@ -114,18 +114,13 @@ portfolio 1.2/
 
 ---
 
-## 🎯 Portfolio Philosophy
+## Portfolio Philosophy
 
 The design rejects the typical "card grid on white background" portfolio format. Instead it treats the portfolio itself as a project — something that demonstrates craft, not just lists it.
 
-1. **Code as art** — every visual effect is written by hand; nothing is imported from a component library
-2. **Performance as design** — animations run on `canvas` and GPU-composited layers, never forcing layout reflows
-3. **Restraint** — one font family, two colours, no images except project screenshots; the work speaks through motion and text
-4. **Real device parity** — mobile experience is engineered to match desktop exactly, not just "responsive"
-
 ---
 
-## ✅ Best Practices
+## Best Practices
 
 ### Performance
 - Canvas animations use `requestAnimationFrame` with a single loop; no `setInterval` timers on the render path
@@ -169,17 +164,7 @@ The design rejects the typical "card grid on white background" portfolio format.
 
 ---
 
-## ⚡ Why This Portfolio Stands Out
-
-1. **Zero UI libraries** — every interactive element is original code; no Framer Motion, no shadcn, no component kit
-2. **Physics-accurate black hole** — Keplerian orbital mechanics and Doppler colour shift implemented on Canvas, inspired by *Interstellar*
-3. **Engineered for real devices** — most mobile bugs are invisible in DevTools emulation; this was tested and fixed on real Android hardware
-4. **Typography-first design** — the entire visual language is built on a single monospace font family, fluid type scaling, and deliberate whitespace
-5. **Performant by construction** — compositor-thread animations, passive event listeners, and `dvh` viewport handling chosen from the ground up
-
----
-
-## 📄 License
+## License
 
 Copyright (c) 2026 Alaa Younsi. All rights reserved.
 
@@ -201,7 +186,7 @@ limited to:
    - Redistributing this code as your own work.
 - **Accessibility Checks** - WCAG compliance validation
 
-## 👨‍💻 About the Developer
+##  About the Developer
 
 **Alaa Younsi**
 *Full-Stack Developer & UI/UX Designer*
