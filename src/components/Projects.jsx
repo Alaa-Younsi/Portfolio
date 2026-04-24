@@ -1,6 +1,7 @@
 ﻿import { useTypingSequence } from '../hooks/useTypingSequence'
 
 const PROJECTS = [
+  { meta: '2026 / Comission / Online Shop', title: 'Northernwest',    url: 'https://northernwest20.vercel.app/',        label: 'Visit Northernwest project (opens in new tab)' },
   { meta: '2026 / Comission / Company',    title: 'Afia Export',      url: 'https://www.afiaexport.com/',              label: 'Visit Afia Export project (opens in new tab)' },
   { meta: '2026 / Comission / Online Store',  title: 'VintageDZ', url: 'https://vintagedz.vercel.app/',                label: 'Visit Vintagedz project (opens in new tab)' },
   { meta: '2026 / Comission / Platform',    title: 'Supremease',   url: 'https://supremease1-0.vercel.app/',           label: 'Visit Supremease project (opens in new tab)' },
