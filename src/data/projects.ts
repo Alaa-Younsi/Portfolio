@@ -1,56 +1,29 @@
 export type Project = {
-  /** "year / engagement / category" — rendered above the title. */
+  /** "engagement / category" — rendered above the title. */
   readonly meta: string;
   readonly title: string;
   readonly url: string;
 };
 
+/**
+ * Rendered top to bottom in this order, so the last entry is the one that sits
+ * at the foot of the list.
+ */
 export const projects: readonly Project[] = [
+  { meta: "Commission / Online Shop", title: "Jazym", url: "https://jazym.vercel.app/" },
+  { meta: "Commission / Private Driver", title: "The Driver", url: "https://thedriver.fr/" },
+  { meta: "Commission / Company", title: "Norlyn Coffee", url: "https://www.norlyncoffee.com/" },
+  { meta: "Commission / Cars Workshop", title: "GSM Auto", url: "https://www.gsmautodz.com/" },
+  { meta: "Commission / Online Shop", title: "Kindo", url: "https://www.kindodz.com/" },
+  { meta: "Commission / Online Shop", title: "Laroche", url: "https://www.larochebijoux.com/" },
+  { meta: "Commission / Company", title: "HIS & HVAC", url: "https://www.his-hvac.com/en" },
   {
-    meta: "2026 / Commission / Online Shop",
-    title: "Arcada",
-    url: "https://arcada-store.vercel.app/",
+    meta: "Commission / Company",
+    title: "Amana Partners",
+    url: "https://www.amanapartnersllc.com/",
   },
-  {
-    meta: "2026 / Commission / Online Shop",
-    title: "Northernwest",
-    url: "https://northernwest20.vercel.app/",
-  },
-  { meta: "2026 / Commission / Company", title: "Afia Export", url: "https://www.afiaexport.com/" },
-  {
-    meta: "2026 / Commission / Online Store",
-    title: "VintageDZ",
-    url: "https://vintagedz.vercel.app/",
-  },
-  {
-    meta: "2026 / Commission / Platform",
-    title: "Supremease",
-    url: "https://supremease1-0.vercel.app/",
-  },
-  {
-    meta: "2026 / Commission / Platform",
-    title: "DentaBot",
-    url: "https://denta-bot1-0.vercel.app/",
-  },
-  {
-    meta: "2026 / Personal / Playground",
-    title: "CPlayground",
-    url: "https://c-playground-web-edition.vercel.app/",
-  },
-  { meta: "2025 / Commission / Agency", title: "MYB Agency", url: "https://www.mind-yb.com/" },
-  {
-    meta: "2024 / Personal / Agency",
-    title: "SkyWeb Media",
-    url: "https://sky-web-media.vercel.app/",
-  },
-  {
-    meta: "2023 / Personal / Restaurant",
-    title: "Temple Tacos",
-    url: "https://temple-tacos.vercel.app/",
-  },
-  {
-    meta: "2023 / Commission / School",
-    title: "ENK School",
-    url: "https://enk-school.vercel.app/",
-  },
+  { meta: "Commission / Online Shop", title: "Auto Style", url: "https://auto-style.shop/" },
+  { meta: "Commission / Online Shop", title: "Northernwest", url: "https://northern-west.shop/" },
+  { meta: "Commission / Store", title: "Arcada", url: "https://www.arcadatile.com/" },
+  { meta: "Commission / Company", title: "Afia Export", url: "https://www.afiaexport.com/" },
 ] as const;
