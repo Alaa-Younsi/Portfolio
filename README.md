@@ -50,6 +50,12 @@ way Gargantua's does in *Interstellar*. Click it and the disk surges, flashes
 and detonates, the frame drops away, the stars flood the viewport — and a
 long-form biography surfaces out of the dark, images scattered through it.
 
+Around it, a quiet system: a ringed world, a rocky planet with a moon, and
+wireframe ships crossing the frame with engine trails — lit from the centre,
+because the black hole is the light source. Behind the biography the sky
+changes: a gas giant off the edge, a rotating station, freight traffic, a
+faint nebula.
+
 The design is deliberately narrow: white on black, two monospace faces (Geist
 Mono for reading, Martian Mono for headlines), `clamp()`-driven fluid type,
 text that decodes into place behind a block caret, and a chromatic-aberration
@@ -166,6 +172,16 @@ and a CSS `clip-path` bounds the element, because on mobile the canvas is
 promoted to its own GPU layer and the compositor will otherwise paint past the
 border.
 
+### Cosmos — `src/lib/cosmos.ts`
+
+Planets are painted once into offscreen bitmaps — a lit hemisphere, latitude
+bands, a terminator shadow, a rim light, ring systems split into the half
+behind the body and the half in front — and blitted every frame. Ships are
+line-art silhouettes filled black so they occlude the stars, with a gradient
+engine trail and a blinking navigation light. The pointer nudges planets with
+bounded parallax that relaxes back to rest; ships wrap around the frame. The
+two scenes cross-fade when the black hole collapses.
+
 ### Black hole — `src/lib/blackhole-gl.ts` + `blackhole.glsl.ts`
 
 Every pixel traces a light ray *backwards* from the camera through the
@@ -187,9 +203,11 @@ redshift. Exposure is filmic, so beamed highlights roll off to cream instead of
 clipping.
 
 Rays start on a bounding sphere rather than at the camera, so empty space costs
-nothing, and the internal resolution adapts to measured frame time: the canvas
-opens below budget and climbs, and a phone renders the identical design at
-roughly a third of the fragments. Browsers without WebGL or 32-bit fragment
+nothing. The internal resolution is governed by the presented frame interval:
+the canvas opens below budget and climbs toward the device's own pixel density
+whenever the frame rate holds, so a strong phone earns a razor-sharp disk and a
+weak one settles where it stays smooth — the picture is the same, only the
+pixel count differs. Browsers without WebGL or 32-bit fragment
 floats get the Canvas 2D particle version in `blackhole-2d.ts`; both share one
 handle, so the component never knows which it received.
 
@@ -323,7 +341,8 @@ particle mathematics the site runs, so the preview matches the product.
     ├── config/site.ts          # Identity, socials, section metadata
     ├── data/                   # Projects, copy and the biography
     ├── lib/
-    │   ├── starfield.ts        # Pointer-reactive star simulation
+    │   ├── starfield.ts        # Pointer-reactive star simulation, hosts the cosmos
+    │   ├── cosmos.ts           # Planets, ships, station, nebulae — two scenes
     │   ├── blackhole.ts        # Picks the GL renderer or the 2D fallback
     │   ├── blackhole-gl.ts     # WebGL runtime: uniforms, clock, adaptive resolution
     │   ├── blackhole.glsl.ts   # The ray-marching fragment shader

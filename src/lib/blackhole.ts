@@ -18,5 +18,11 @@ export function createBlackHole(
   size: number,
   options: BlackHoleOptions,
 ): BlackHoleHandle {
-  return createBlackHoleGL(canvas, size, options) ?? createBlackHole2D(canvas, size);
+  try {
+    return createBlackHoleGL(canvas, size, options) ?? createBlackHole2D(canvas, size);
+  } catch (error) {
+    // A canvas with no usable context must never take the page down with it.
+    console.warn("BlackHole: rendering unavailable", error);
+    return { setHovered() {}, setExploding() {}, setReducedMotion() {}, destroy() {} };
+  }
 }

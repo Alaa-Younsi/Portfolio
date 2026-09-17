@@ -17,10 +17,7 @@ export function Header({ active, onNavigate }: HeaderProps) {
         {site.tagline}
       </p>
 
-      <nav
-        aria-label="Main navigation"
-        className="mt-6 space-y-1 text-left sm:mt-8 sm:space-y-2 lg:mt-10"
-      >
+      <nav aria-label="Main navigation" className="mt-5 space-y-2 text-left sm:mt-8 lg:mt-10">
         {SECTIONS.map((section, index) => {
           const isActive = active === section;
           const label = SECTION_LABELS[section];
@@ -31,7 +28,7 @@ export function Header({ active, onNavigate }: HeaderProps) {
               onClick={() => onNavigate(section)}
               aria-label={`Navigate to ${label}`}
               aria-current={isActive ? "page" : undefined}
-              className="block animate-summon text-left text-[clamp(0.7rem,1vw,1rem)] font-normal text-fg transition-opacity duration-200 hover:opacity-60"
+              className="block animate-summon py-1 text-left text-[0.85rem] font-normal text-fg transition-opacity duration-200 hover:opacity-60 sm:py-0 sm:text-[clamp(0.7rem,1vw,1rem)]"
               style={{ animationDelay: `${220 + index * 70}ms` }}
             >
               <span aria-hidden="true" className="glitch" data-text={isActive ? "\u25cf" : label}>

@@ -1,13 +1,16 @@
 import { useEffect, useRef } from "react";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import type { Scene } from "@/lib/cosmos";
 import { createStarField, type StarFieldHandle } from "@/lib/starfield";
 
 type StarFieldProps = {
   /** During the collapse the field escapes the frame and fills the viewport. */
   fullScreen: boolean;
+  /** Which set of planets and ships is in the sky. */
+  scene: Scene;
 };
 
-export function StarField({ fullScreen }: StarFieldProps) {
+export function StarField({ fullScreen, scene }: StarFieldProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fieldRef = useRef<StarFieldHandle | null>(null);
   const reducedMotion = usePrefersReducedMotion();
@@ -27,6 +30,10 @@ export function StarField({ fullScreen }: StarFieldProps) {
   useEffect(() => {
     fieldRef.current?.setFullScreen(fullScreen);
   }, [fullScreen]);
+
+  useEffect(() => {
+    fieldRef.current?.setScene(scene);
+  }, [scene]);
 
   useEffect(() => {
     fieldRef.current?.setReducedMotion(reducedMotion);

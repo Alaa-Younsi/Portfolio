@@ -69,7 +69,7 @@ export function BlackHole({ exploding, onExplode }: BlackHoleProps) {
         transform: `translate(-50%, -50%) scale(${exploding ? 1.06 : 1})`,
       }}
     >
-      <canvas ref={canvasRef} className="pointer-events-none block" />
+      <canvas key={size} ref={canvasRef} className="pointer-events-none block" />
     </button>
   );
 }

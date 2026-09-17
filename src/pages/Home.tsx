@@ -56,7 +56,7 @@ export function Home() {
 
   return (
     <main className="h-full overflow-hidden bg-bg text-fg">
-      <StarField fullScreen={collapsed} />
+      <StarField fullScreen={collapsed} scene={phase === "collapsed" ? "chronicle" : "home"} />
       {ready && <Frame hidden={collapsed} />}
       <SplashScreen onDone={onSplashDone} />
 

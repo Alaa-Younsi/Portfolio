@@ -166,14 +166,15 @@ void main() {
   // Photon ring: light that orbited the hole before escaping.
   float ring = exp(-pow((impact - 2.62) * 3.2, 2.0));
   col += vec3(1.0, 0.8, 0.55) * ring * (0.14 + 0.22 * uHover + 1.6 * surge);
-  alpha = max(alpha, ring * 0.5);
+  alpha = max(alpha, ring * (0.14 + 0.22 * uHover + 1.6 * surge));
 
   // A faint haze along the disk plane, outside the shadow: the atmosphere a
   // real accretion flow has and a zero-thickness disk does not.
   float haze = exp(-pow(uv.y * 4.5, 2.0)) * exp(-pow(uv.x * 1.3, 2.0));
   haze *= smoothstep(2.3, 4.0, impact) * 0.06;
+  haze *= smoothstep(1.0, 0.72, abs(uv.x)) * smoothstep(1.0, 0.72, abs(uv.y));
   col += vec3(1.0, 0.7, 0.42) * haze;
-  alpha = max(alpha, haze * 2.0);
+  alpha = max(alpha, haze);
 
   // Filmic exposure: beamed highlights roll off to white instead of clipping.
   col = min(col, vec3(2.4));

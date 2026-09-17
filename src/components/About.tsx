@@ -73,7 +73,7 @@ export function About({ active }: AboutProps) {
               line={line}
               href={link.href}
               description={link.description}
-              className="block text-[clamp(0.7rem,1vw,0.9rem)] transition-opacity duration-200 hover:opacity-50"
+              className="block py-1 text-[0.85rem] transition-opacity duration-200 hover:opacity-50 sm:py-0 sm:text-[clamp(0.7rem,1vw,0.9rem)]"
             />
           );
         })}

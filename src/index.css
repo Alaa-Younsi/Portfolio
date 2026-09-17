@@ -115,16 +115,25 @@
     @apply animate-glitchB;
   }
 
-  a:hover > .glitch,
-  button:hover > .glitch {
-    @apply animate-glitchLoopBase;
+  .glitch.is-glitching {
+    text-shadow:
+      0.04em 0 0 var(--glitch-a),
+      -0.04em 0 0 var(--glitch-b);
   }
-  a:hover > .glitch::before,
-  button:hover > .glitch::before {
+
+  a:hover .glitch,
+  button:hover .glitch {
+    @apply animate-glitchLoopBase;
+    text-shadow:
+      0.04em 0 0 var(--glitch-a),
+      -0.04em 0 0 var(--glitch-b);
+  }
+  a:hover .glitch::before,
+  button:hover .glitch::before {
     @apply animate-glitchLoopA;
   }
-  a:hover > .glitch::after,
-  button:hover > .glitch::after {
+  a:hover .glitch::after,
+  button:hover .glitch::after {
     @apply animate-glitchLoopB;
   }
 
@@ -200,12 +209,6 @@
 }
 
 @media (max-width: 640px) {
-  button,
-  a {
-    min-height: 44px;
-    min-width: 44px;
-  }
-
   p,
   span {
     line-height: 1.4;

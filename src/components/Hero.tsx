@@ -20,12 +20,12 @@ export function Hero({ active }: HeroProps) {
             key={line.full}
             as="p"
             line={line}
-            className="text-[clamp(0.6rem,1vw,0.9rem)] leading-[1.2]"
+            className="text-[0.72rem] leading-[1.25] sm:text-[clamp(0.6rem,1vw,0.9rem)] sm:leading-[1.2]"
           />
         ))}
       </div>
 
-      <div className="absolute bottom-content-y left-content-x animate-fadeIn space-y-2 text-fg">
+      <div className="absolute bottom-content-y left-content-x animate-fadeIn space-y-1 text-fg sm:space-y-2">
         {heroLinks.map((link, index) => {
           const line = links[index];
           if (!line) return null;
@@ -35,7 +35,7 @@ export function Hero({ active }: HeroProps) {
               line={line}
               href={link.href}
               description={link.description}
-              className="block text-[clamp(0.7rem,1vw,0.9rem)] transition-opacity duration-200 hover:opacity-50"
+              className="block py-1 text-[0.85rem] transition-opacity duration-200 hover:opacity-50 sm:py-0 sm:text-[clamp(0.7rem,1vw,0.9rem)]"
             />
           );
         })}

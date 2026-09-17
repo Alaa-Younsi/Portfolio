@@ -6,6 +6,8 @@
  * That keeps per-frame work out of the React render path entirely.
  */
 
+import { type Bounds, createCosmos, type Scene } from "./cosmos";
+
 type Star = { x: number; y: number; z: number; alpha: number };
 
 const STAR_SIZE = 3;
@@ -20,6 +22,7 @@ const STAR_DENSITY_DIVISOR = 8;
 
 export type StarFieldHandle = {
   setFullScreen: (value: boolean) => void;
+  setScene: (scene: Scene) => void;
   setReducedMotion: (value: boolean) => void;
   destroy: () => void;
 };
@@ -32,7 +35,7 @@ function frameInset(): { x: number; y: number } {
   };
 }
 
-export function createStarField(canvas: HTMLCanvasElement): StarFieldHandle {
+export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"): StarFieldHandle {
   const ctx = canvas.getContext("2d", { alpha: false });
   if (!ctx) throw new Error("StarField: 2D context unavailable");
 
@@ -45,6 +48,8 @@ export function createStarField(canvas: HTMLCanvasElement): StarFieldHandle {
   let resizeId: number | null = null;
   let stars: Star[] = [];
   let touchInput = false;
+  let lastFrame = 0;
+  const cosmos = createCosmos(scene);
 
   const bounds = { top: 0, bottom: 1, left: 0, right: 1 };
   const velocity = { x: 0, y: 0, tx: 0, ty: 0 };
@@ -184,6 +189,18 @@ export function createStarField(canvas: HTMLCanvasElement): StarFieldHandle {
     ctx.rect(left + inset, top + inset, right - left - inset * 2, bottom - top - inset * 2);
     ctx.clip();
 
+    // Planets and nebulae sit behind the stars; ships fly in front of them.
+    const cssBounds: Bounds = {
+      left: left / scale,
+      top: top / scale,
+      right: right / scale,
+      bottom: bottom / scale,
+    };
+    ctx.save();
+    ctx.scale(scale, scale);
+    cosmos.drawBack(ctx, cssBounds, scale);
+    ctx.restore();
+
     ctx.lineCap = "round";
     ctx.strokeStyle = "#fff";
 
@@ -201,11 +218,30 @@ export function createStarField(canvas: HTMLCanvasElement): StarFieldHandle {
       ctx.stroke();
     }
 
+    ctx.globalAlpha = 1;
+    ctx.save();
+    ctx.scale(scale, scale);
+    cosmos.drawFront(ctx, cssBounds, scale);
+    ctx.restore();
+
     ctx.restore();
     ctx.globalAlpha = 1;
   };
 
-  const step = (): void => {
+  const tick = (now: number): void => {
+    const dt = lastFrame === 0 ? 0 : Math.min((now - lastFrame) / 1000, 0.05);
+    lastFrame = now;
+    const { left, right, top, bottom } = edges();
+    cosmos.update(
+      dt,
+      { left: left / scale, top: top / scale, right: right / scale, bottom: bottom / scale },
+      velocity.x / scale,
+      velocity.y / scale,
+    );
+  };
+
+  const step = (now: number): void => {
+    tick(now);
     update();
     render();
     frameId = requestAnimationFrame(step);
@@ -213,7 +249,9 @@ export function createStarField(canvas: HTMLCanvasElement): StarFieldHandle {
 
   const play = (): void => {
     if (frameId !== null) return;
+    lastFrame = 0;
     if (reducedMotion) {
+      tick(performance.now());
       render();
       return;
     }
@@ -297,8 +335,16 @@ export function createStarField(canvas: HTMLCanvasElement): StarFieldHandle {
     setReducedMotion(value) {
       if (reducedMotion === value) return;
       reducedMotion = value;
+      cosmos.setReducedMotion(value);
       pause();
       play();
+    },
+    setScene(next) {
+      cosmos.setScene(next);
+      if (reducedMotion) {
+        tick(performance.now());
+        render();
+      }
     },
     destroy() {
       pause();

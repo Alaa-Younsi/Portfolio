@@ -22,10 +22,15 @@ const COLLAPSE_MS = 1100;
 const HOVER_EASE = 6;
 const BASE_SPEED = 0.85;
 
-/** Frame-time targets that drive the adaptive resolution. */
-const SLOW_MS = 22;
-const FAST_MS = 11;
-const MIN_SCALE = 0.35;
+/**
+ * Frame-interval targets that drive the adaptive resolution. GPU work is
+ * asynchronous, so the honest cost signal is how often the browser manages to
+ * present a frame, not how long our JavaScript took to submit it.
+ */
+const SLOW_MS = 24;
+const FAST_MS = 17.5;
+const MIN_SCALE = 0.3;
+const ADJUST_EVERY = 24;
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
 const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
@@ -104,10 +109,13 @@ export function createBlackHoleGL(
   gl.clearColor(0, 0, 0, 0);
 
   // --- resolution -----------------------------------------------------------
-  const targetScale = compact ? 0.65 : clamp(window.devicePixelRatio || 1, 1, 1.25);
+  // The ceiling is the device's own pixel density: a strong phone earns a
+  // razor-sharp disk, a weak one settles wherever its frame rate holds.
+  const dpr = window.devicePixelRatio || 1;
+  const targetScale = compact ? clamp(dpr, 1, 2.5) : clamp(dpr, 1, 1.5);
   // Open below budget and climb: a stutter in the first second is what a
   // visitor remembers, a slightly soft first second is not.
-  let scale = targetScale * 0.75;
+  let scale = compact ? Math.max(0.7, targetScale * 0.45) : targetScale * 0.7;
 
   const applyScale = (): void => {
     const px = Math.max(64, Math.round(size * scale));
@@ -133,7 +141,7 @@ export function createBlackHoleGL(
   let elapsed = 0;
   let last = 0;
   let frameId: number | null = null;
-  let frameCost = 0;
+  let frameInterval = 0;
   let sinceAdjust = 0;
   let lost = false;
 
@@ -160,30 +168,30 @@ export function createBlackHoleGL(
   };
 
   /**
-   * Adaptive resolution: an exponential average of frame cost decides whether
-   * the next frame renders fewer or more pixels. The design never changes,
-   * only how many fragments pay for it.
+   * Adaptive resolution: an exponential average of the presented frame
+   * interval decides whether the next frames render fewer or more pixels.
+   * The design never changes, only how many fragments pay for it.
    */
-  const adapt = (frameStart: number): void => {
-    const cost = performance.now() - frameStart;
-    frameCost = frameCost === 0 ? cost : frameCost * 0.9 + cost * 0.1;
+  const adapt = (interval: number): void => {
+    if (interval <= 0) return;
+    frameInterval = frameInterval === 0 ? interval : frameInterval * 0.85 + interval * 0.15;
     sinceAdjust += 1;
-    if (sinceAdjust < 45) return;
+    if (sinceAdjust < ADJUST_EVERY) return;
     sinceAdjust = 0;
 
-    if (frameCost > SLOW_MS && scale > MIN_SCALE) {
-      scale = Math.max(MIN_SCALE, scale * 0.82);
+    if (frameInterval > SLOW_MS && scale > MIN_SCALE) {
+      scale = Math.max(MIN_SCALE, scale * 0.8);
       applyScale();
-    } else if (frameCost < FAST_MS && scale < targetScale) {
-      scale = Math.min(targetScale, scale * 1.12);
+    } else if (frameInterval < FAST_MS && scale < targetScale) {
+      scale = Math.min(targetScale, scale * 1.2);
       applyScale();
     }
   };
 
   const step = (now: number): void => {
-    const start = performance.now();
+    const interval = last === 0 ? 0 : now - last;
     draw(now);
-    adapt(start);
+    adapt(interval);
     frameId = requestAnimationFrame(step);
   };
 

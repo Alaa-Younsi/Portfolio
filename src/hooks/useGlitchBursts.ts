@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 import { usePrefersReducedMotion } from "./useMediaQuery";
 
-const MIN_GAP_MS = 1400;
-const MAX_GAP_MS = 3600;
-const BURST_MS = 420;
+const MIN_GAP_MS = 700;
+const MAX_GAP_MS = 2200;
+const BURST_MS = 560;
 const CLASS = "is-glitching";
 
 /**
@@ -24,7 +24,7 @@ export function useGlitchBursts(enabled: boolean): void {
       const candidates = document.querySelectorAll<HTMLElement>(`.glitch:not(.${CLASS})`);
       const count = candidates.length;
       if (count > 0 && !document.hidden) {
-        const hits = Math.random() < 0.3 ? 2 : 1;
+        const hits = Math.random() < 0.45 ? 3 : 2;
         for (let i = 0; i < hits; i++) {
           const el = candidates[Math.floor(Math.random() * count)];
           if (!el) continue;
