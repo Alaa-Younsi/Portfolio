@@ -1,7 +1,8 @@
 {
   "name": "Alaa Younsi — Portfolio",
-  "short_name": "Alaa Younsi",
+  "short_name": "ashv3il",
   "description": "Developer and designer building creative, hand-coded web experiences.",
+  "id": "/",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

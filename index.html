@@ -9,7 +9,7 @@
       name="description"
       content="Alaa Younsi is a developer and designer specializing in website development, design, and server-side services. Explore creative projects and innovative digital solutions."
     />
-    <link rel="canonical" href="https://alaa-younsi.vercel.app/" />
+    <link rel="canonical" href="%SITE_URL%/" />
     <meta name="author" content="Alaa Younsi" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#000000" />
@@ -26,9 +26,9 @@
       property="og:description"
       content="Developer and designer building creative, hand-coded web experiences. Website development, design, and server-side services."
     />
-    <meta property="og:url" content="https://alaa-younsi.vercel.app/" />
+    <meta property="og:url" content="%SITE_URL%/" />
     <meta property="og:locale" content="en_US" />
-    <meta property="og:image" content="https://alaa-younsi.vercel.app/og-image.png" />
+    <meta property="og:image" content="%SITE_URL%/og-image.png" />
     <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -43,7 +43,7 @@
       name="twitter:description"
       content="Developer and designer building creative, hand-coded web experiences."
     />
-    <meta name="twitter:image" content="https://alaa-younsi.vercel.app/og-image.png" />
+    <meta name="twitter:image" content="%SITE_URL%/og-image.png" />
     <meta name="twitter:creator" content="@ashv3il" />
     <meta name="twitter:site" content="@ashv3il" />
 
@@ -67,10 +67,11 @@
         "@graph": [
           {
             "@type": "Person",
-            "@id": "https://alaa-younsi.vercel.app/#person",
+            "@id": "%SITE_URL%/#person",
             "name": "Alaa Younsi",
-            "url": "https://alaa-younsi.vercel.app/",
-            "image": "https://alaa-younsi.vercel.app/icon-512.png",
+            "alternateName": "ashv3il",
+            "url": "%SITE_URL%/",
+            "image": "%SITE_URL%/icon-512.png",
             "jobTitle": "Full-Stack Developer & UI/UX Designer",
             "description": "Developer and designer specializing in website development, design, and server-side services.",
             "birthPlace": "Skikda, Algeria",
@@ -94,12 +95,12 @@
           },
           {
             "@type": "WebSite",
-            "@id": "https://alaa-younsi.vercel.app/#website",
-            "url": "https://alaa-younsi.vercel.app/",
+            "@id": "%SITE_URL%/#website",
+            "url": "%SITE_URL%/",
             "name": "Alaa Younsi Portfolio",
             "inLanguage": "en",
-            "author": { "@id": "https://alaa-younsi.vercel.app/#person" },
-            "publisher": { "@id": "https://alaa-younsi.vercel.app/#person" }
+            "author": { "@id": "%SITE_URL%/#person" },
+            "publisher": { "@id": "%SITE_URL%/#person" }
           }
         ]
       }

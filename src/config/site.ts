@@ -4,9 +4,11 @@
  */
 export const site = {
   name: "Alaa Younsi",
+  handle: "ashv3il",
   tagline: "Problem Solving Enjoyer",
   role: "Developer & Designer",
-  url: "https://alaa-younsi.vercel.app",
+  /** Injected from `SITE_URL` in vite.config.ts — never hard-code it twice. */
+  url: __SITE_URL__,
   locale: "en",
   twitterHandle: "@ashv3il",
   description:
