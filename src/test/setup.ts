@@ -9,28 +9,28 @@ import { afterEach, vi } from "vitest";
 const gradient = { addColorStop: () => {} } as unknown as CanvasGradient;
 const noop = () => {};
 
-const context = {
-  canvas: undefined,
-  globalAlpha: 1,
-  fillStyle: "",
-  strokeStyle: "",
-  lineWidth: 1,
-  lineCap: "butt",
-  arc: noop,
-  beginPath: noop,
-  clearRect: noop,
-  clip: noop,
-  fill: noop,
-  fillRect: noop,
-  lineTo: noop,
-  moveTo: noop,
-  rect: noop,
-  restore: noop,
-  save: noop,
-  scale: noop,
-  stroke: noop,
-  createRadialGradient: () => gradient,
-} as unknown as CanvasRenderingContext2D;
+/**
+ * A permissive 2D context: any method is a no-op, any gradient factory returns
+ * a stub, and assigned properties read back. The renderers touch a lot of
+ * surface (transforms, ellipses, offscreen bitmaps) that jsdom does not have.
+ */
+const store: Record<string | symbol, unknown> = {};
+const context = new Proxy(store, {
+  get(target, prop) {
+    if (prop in target) return target[prop];
+    if (prop === "canvas") return undefined;
+    if (typeof prop === "string" && prop.startsWith("create") && prop.endsWith("Gradient")) {
+      return () => gradient;
+    }
+    if (prop === "measureText") return () => ({ width: 0 });
+    if (prop === "getImageData") return () => ({ data: new Uint8ClampedArray(4) });
+    return noop;
+  },
+  set(target, prop, value) {
+    target[prop] = value;
+    return true;
+  },
+}) as unknown as CanvasRenderingContext2D;
 
 // WebGL is reported as unavailable so the black hole takes its 2D fallback.
 HTMLCanvasElement.prototype.getContext = vi.fn((kind: string) =>
