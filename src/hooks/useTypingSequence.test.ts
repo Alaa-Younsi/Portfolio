@@ -6,8 +6,12 @@ const LINES = ["ab", "cd"] as const;
 const SPEED = 10;
 const LINE_PAUSE = 100;
 
-/** Each timer must flush through React before the next one is scheduled. */
+/**
+ * Each timer must flush through React before the next one is scheduled, and
+ * keystrokes are jittered ±40%, so a tick advances by more than one delay.
+ */
 const tick = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
+const KEY = SPEED * 1.5;
 
 afterEach(() => {
   vi.useRealTimers();
@@ -20,10 +24,10 @@ describe("useTypingSequence", () => {
 
     expect(result.current[0]?.text).toBe("");
 
-    tick(SPEED);
+    tick(KEY);
     expect(result.current[0]?.text).toBe("a");
 
-    tick(SPEED);
+    tick(KEY);
     expect(result.current[0]?.text).toBe("ab");
     expect(result.current[0]?.done).toBe(true);
   });
@@ -32,13 +36,13 @@ describe("useTypingSequence", () => {
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
     const { result } = renderHook(() => useTypingSequence(LINES, true, SPEED));
 
-    tick(SPEED);
-    tick(SPEED);
+    tick(KEY);
+    tick(KEY);
     expect(result.current[1]?.text).toBe("");
 
     tick(LINE_PAUSE);
-    tick(SPEED);
-    tick(SPEED);
+    tick(KEY);
+    tick(KEY);
     expect(result.current[1]?.text).toBe("cd");
     expect(result.current.every((line) => line.done)).toBe(true);
   });
@@ -54,5 +58,16 @@ describe("useTypingSequence", () => {
   it("always exposes the full string for assistive technology", () => {
     const { result } = renderHook(() => useTypingSequence(LINES, true, SPEED));
     expect(result.current.map((line) => line.full)).toEqual(["ab", "cd"]);
+  });
+
+  it("runs noise ahead of the caret only while a line is typing", () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    const { result } = renderHook(() => useTypingSequence(LINES, true, SPEED));
+
+    expect(result.current[0]?.scramble.length).toBeGreaterThan(0);
+    tick(KEY);
+    tick(KEY);
+    expect(result.current[0]?.done).toBe(true);
+    expect(result.current[0]?.scramble).toBe("");
   });
 });

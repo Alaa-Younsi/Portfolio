@@ -3,7 +3,7 @@
 # Alaa Younsi — Portfolio
 
 **A framed interstellar single-page portfolio.**
-Hand-written canvas physics, no UI kit, no animation library, three runtime dependencies.
+A ray-marched black hole, hand-written canvas physics, no UI kit, no animation library, three runtime dependencies.
 
 **[ashv3il.me](https://ashv3il.me)**
 
@@ -44,12 +44,17 @@ portfolio itself as the project.
 
 Everything the site contains — the type, the navigation, and the interactive
 star field behind it — lives inside a single white frame drawn over black. At
-the centre sits a black hole rendered from actual orbital mechanics. Click it
-and the disk detonates, the frame drops away, and the stars flood the viewport.
+the centre sits a black hole rendered on the GPU by tracing light through the
+Schwarzschild metric, so its accretion disk bends over and under the shadow the
+way Gargantua's does in *Interstellar*. Click it and the disk surges, flashes
+and detonates, the frame drops away, the stars flood the viewport — and a
+long-form biography surfaces out of the dark, images scattered through it.
 
-The design is deliberately narrow: white on black, one monospace typeface,
-`clamp()`-driven fluid type, and chromatic-aberration glitch on every heading
-and link. Nothing is decorative by accident.
+The design is deliberately narrow: white on black, two monospace faces (Geist
+Mono for reading, Martian Mono for headlines), `clamp()`-driven fluid type,
+text that decodes into place behind a block caret, and a chromatic-aberration
+glitch that tears through headings and links in short bursts. Nothing is
+decorative by accident.
 
 ---
 
@@ -62,13 +67,15 @@ and link. Nothing is decorative by accident.
 | UI | **React 19** | Function components and hooks only |
 | Language | **TypeScript 5.9** — `strict` | Plus `noUncheckedIndexedAccess` and `exactOptionalPropertyTypes` |
 | Styling | **Tailwind CSS 3** | Utilities layered over CSS-variable design tokens |
+| Rendering | **WebGL** (GLSL ES 1.0) | Ray-marched black hole; Canvas 2D everywhere else |
+| Type | **Geist Mono** + **Martian Mono** | Self-hosted variable fonts, latin subsets, 62 KB total |
 | Lint & format | **Biome 2** | One binary, one config; replaces ESLint + Prettier |
 | Tests | **Vitest 5** + Testing Library | jsdom, canvas stubbed |
 | Hosting | **Vercel** | Static edge delivery; headers declared in `vercel.json` |
 
 **Runtime dependencies: `react`, `react-dom`, `react-error-boundary`.** Nothing
-else ships to the browser — every animation, particle system and transition in
-this repository is written by hand.
+else ships to the browser — every animation, particle system, shader and
+transition in this repository is written by hand.
 
 ---
 
@@ -122,8 +129,8 @@ One architectural rule governs this codebase:
              │                     ▼                      ▼
              │            ┌──────────────────┐   ┌──────────────────┐
              │            │ lib/starfield.ts │   │ lib/blackhole.ts │
-             │            │ owns canvas,     │   │ owns canvas,     │
-             │            │ listeners, rAF   │   │ listeners, rAF   │
+             │            │ owns canvas,     │   │ GL ray marcher,  │
+             │            │ listeners, rAF   │   │ 2D fallback      │
              │            └──────────────────┘   └──────────────────┘
              ▼
     ┌─────────────────────────┐        ┌──────────────────────────┐
@@ -159,26 +166,66 @@ and a CSS `clip-path` bounds the element, because on mobile the canvas is
 promoted to its own GPU layer and the compositor will otherwise paint past the
 border.
 
-### Black hole — `src/lib/blackhole.ts`
+### Black hole — `src/lib/blackhole-gl.ts` + `blackhole.glsl.ts`
 
-400 particles orbit on Keplerian paths, so angular velocity falls off as
-`1/√r` and the inner disk visibly outruns the outer. Colour comes from a
-Doppler shift: material rotating towards the viewer is blue-shifted and
-brighter, material rotating away is red-shifted. Particles are depth-sorted so
-the far half of the disk is occluded by the event horizon, which is layered
-under a photon ring and a gravitational-lensing halo.
+Every pixel traces a light ray *backwards* from the camera through the
+Schwarzschild metric. In units where the Schwarzschild radius is 1, the
+geodesic is integrated as `d²x/dλ² = −3/2 · h² · x / r⁵` with `h` the ray's
+conserved angular momentum — the exact equation for light around a
+non-rotating black hole. Rays that fall below `r = 1` are captured and paint
+the shadow; rays that cross the disk plane between the innermost stable orbit
+(`r = 3`) and the outer edge pick up emission and keep going. Because the
+integration is real, the far side of the disk is bent over the top and under
+the bottom of the shadow, and a thin photon ring wraps it at `r ≈ 2.6` — no
+part of that silhouette is drawn by hand.
 
-Clicking it seeds 200 plasma particles, expands a shockwave gradient, and hands
-control to the collapse state machine in `Home.tsx`, which fades the UI, drops
-the frame and releases the star field to full viewport.
+The disk itself follows the Novikov–Thorne flux profile (zero at the ISCO,
+peaking just outside it), is sheared by Keplerian rotation (`ω ∝ r^-3/2`), and
+is coloured by special-relativistic Doppler beaming — the approaching side is
+brighter and bluer, the receding side dimmer and redder — and by gravitational
+redshift. Exposure is filmic, so beamed highlights roll off to cream instead of
+clipping.
+
+Rays start on a bounding sphere rather than at the camera, so empty space costs
+nothing, and the internal resolution adapts to measured frame time: the canvas
+opens below budget and climbs, and a phone renders the identical design at
+roughly a third of the fragments. Browsers without WebGL or 32-bit fragment
+floats get the Canvas 2D particle version in `blackhole-2d.ts`; both share one
+handle, so the component never knows which it received.
+
+Clicking it drives a single `uCollapse` timeline: the disk spins up and
+contracts, the horizon flashes, a shockwave races out to the canvas edge, and
+the collapse state machine in `Home.tsx` fades the UI, drops the frame,
+releases the star field to full viewport and summons the biography.
 
 ### Typing engine — `src/hooks/useTypingSequence.ts`
 
 State is a single `{ line, chars }` cursor rather than an array of partial
 strings, so revealing one character costs one integer increment instead of an
-array copy. Every typed line renders the finished sentence into an `.sr-only`
+array copy. Keystrokes are jittered ±40% and pause after punctuation; two
+glyphs of noise run ahead of a block caret, so text is *decoded* into place
+rather than printed, and each line materialises with a blur-and-rise as it
+starts. Every typed line renders the finished sentence into an `.sr-only`
 span alongside the animated text, so assistive technology reads whole sentences
 instead of a stream of fragments, and `aria-labelledby` still resolves.
+
+### Glitch — `src/hooks/useGlitchBursts.ts`
+
+Two colour copies of each heading or link sit behind it, invisible. A scheduler
+picks one or two at random every couple of seconds and, for 400 ms, tears
+horizontal slices out of the copies with `clip-path` while the base text
+twitches; hovering a link runs the same tear continuously and re-decodes its
+label. Between bursts nothing animates, so the effect's idle cost is zero — the
+previous version animated `text-shadow` on every element, every frame.
+
+### The chronicle — `src/components/Chronicle.tsx`
+
+The content behind the black hole: a full-viewport scroll container with no
+scrollbar and a fade mask at both ends, so paragraphs and images appear out of
+nothing rather than sliding in from an edge. Images are scattered through the
+text with a side, width, overhang, tilt and drop derived from their index — the
+layout looks hand-placed and can never reflow differently. An
+`IntersectionObserver` summons each block once as it enters view.
 
 ---
 
@@ -192,17 +239,20 @@ instead of a stream of fragments, and `aria-labelledby` still resolves.
 | CSS | 4.0 kB |
 | Application JS | 8.0 kB |
 | React (separate chunk) | 68.2 kB |
-| JetBrains Mono (variable, latin) | 40 kB |
+| Geist Mono + Martian Mono (variable, latin) | 62 kB |
 
-- **Zero third-party requests.** The typeface is self-hosted as one variable
-  `woff2` and preloaded from the document head — no external DNS lookup, TLS
-  handshake or stylesheet round-trip on the critical path.
+- **Zero third-party requests.** Both typefaces are self-hosted as variable
+  `woff2` files and preloaded from the document head — no external DNS lookup,
+  TLS handshake or stylesheet round-trip on the critical path.
+- The black hole runs on the GPU. Rays skip empty space analytically, exit
+  early on capture or escape, and the render scale adapts to frame time, so a
+  phone and a workstation show the same picture at very different costs.
 - Both canvases suspend their animation frame on `visibilitychange`; a
-  backgrounded tab does no work.
+  backgrounded tab does no work, and the black hole is unmounted entirely while
+  the biography is open.
 - Device pixel ratio is capped at 2 — beyond that the additional fill rate is
   imperceptible and expensive on phones.
-- Radial gradients are built once and rebuilt only when hover state changes; the
-  accretion disk is depth-sorted every tenth frame rather than every frame.
+- The glitch effect is event-driven: nothing repaints between bursts.
 - Resize handling is coalesced into a single animation frame.
 - React is code-split into its own chunk, so shipping application changes does
   not invalidate it in visitors' caches.
@@ -262,7 +312,8 @@ particle mathematics the site runs, so the preview matches the product.
 ├── vercel.json                 # Security headers and cache policy
 ├── .github/workflows/ci.yml    # typecheck → lint → test → build
 ├── public/
-│   ├── fonts/                  # Self-hosted JetBrains Mono (variable, latin)
+│   ├── fonts/                  # Self-hosted Geist Mono + Martian Mono (variable, latin)
+│   ├── images/                 # Project captures shown in the biography
 │   ├── og-image.png            # Generated 1200×630 social card
 │   ├── favicon.ico, icon-*.png, apple-touch-icon.png
 │   └── site.webmanifest, humans.txt
@@ -270,16 +321,22 @@ particle mathematics the site runs, so the preview matches the product.
     ├── main.tsx                # Root render + error boundary
     ├── index.css               # @font-face, design tokens, base layer, glitch
     ├── config/site.ts          # Identity, socials, section metadata
-    ├── data/                   # Projects and copy
+    ├── data/                   # Projects, copy and the biography
     ├── lib/
     │   ├── starfield.ts        # Pointer-reactive star simulation
-    │   └── blackhole.ts        # Accretion disk, photon ring, collapse
+    │   ├── blackhole.ts        # Picks the GL renderer or the 2D fallback
+    │   ├── blackhole-gl.ts     # WebGL runtime: uniforms, clock, adaptive resolution
+    │   ├── blackhole.glsl.ts   # The ray-marching fragment shader
+    │   └── blackhole-2d.ts     # Canvas 2D particle fallback
     ├── hooks/
     │   ├── useTypingSequence.ts
+    │   ├── useScramble.ts      # Decode-from-noise text effect
+    │   ├── useGlitchBursts.ts  # Random glitch scheduler
+    │   ├── useReveal.ts        # Scroll-summoned blocks
     │   ├── useMediaQuery.ts    # + usePrefersReducedMotion, useIsCompact
     │   └── useDocumentTitle.ts
     ├── components/             # Header, Hero, About, Projects, Contact, Frame,
-    │                           # SplashScreen, StarField, BlackHole, TypedText
+    │                           # SplashScreen, StarField, BlackHole, Chronicle, TypedText
     └── pages/Home.tsx          # Layout + collapse state machine
 ```
 
@@ -332,7 +389,9 @@ of sync.
 
 Targets evergreen browsers — **Chrome/Edge 111+, Safari 16.4+, Firefox 113+**.
 The build emits ES2022 with no legacy transpilation, and the layout depends on
-`dvh` units, `clip-path` and variable fonts.
+`dvh` units, `clip-path`, `mask-image` and variable fonts. The black hole needs
+WebGL with `highp` fragment floats (every current GPU); anything else falls
+back to the Canvas 2D renderer automatically.
 
 ---
 
@@ -341,7 +400,7 @@ The build emits ES2022 with no legacy transpilation, and the layout depends on
 | | |
 |---|---|
 | ![Projects](./screenshots/projects.png) | ![Info](./screenshots/info.png) |
-| ![Contact](./screenshots/contact.png) | ![Collapsed](./screenshots/collapse.png) |
+| ![Contact](./screenshots/contact.png) | ![The chronicle](./screenshots/collapse.png) |
 
 <div align="center">
   <img src="./screenshots/mobile-home.png" width="30%" alt="Mobile home" />

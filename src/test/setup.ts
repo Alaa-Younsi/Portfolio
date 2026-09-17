@@ -32,8 +32,9 @@ const context = {
   createRadialGradient: () => gradient,
 } as unknown as CanvasRenderingContext2D;
 
-HTMLCanvasElement.prototype.getContext = vi.fn(
-  () => context,
+// WebGL is reported as unavailable so the black hole takes its 2D fallback.
+HTMLCanvasElement.prototype.getContext = vi.fn((kind: string) =>
+  kind === "2d" ? context : null,
 ) as unknown as HTMLCanvasElement["getContext"];
 
 if (!window.matchMedia) {

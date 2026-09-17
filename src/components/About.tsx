@@ -13,9 +13,8 @@ const SEQUENCE = [
 const GROUPS_OFFSET = 2;
 const LINKS_OFFSET = GROUPS_OFFSET + about.groups.length * 2;
 
-const LABEL_CLASS =
-  "glitch text-[0.6rem] font-normal opacity-80 sm:text-[clamp(0.7rem,1vw,0.9rem)]";
-const BODY_CLASS = "glitch mt-1 text-[0.75rem] sm:text-[clamp(0.9rem,1.25vw,1.05rem)]";
+const LABEL_CLASS = "text-[0.6rem] font-normal opacity-80 sm:text-[clamp(0.7rem,1vw,0.9rem)]";
+const BODY_CLASS = "mt-1 text-[0.75rem] sm:text-[clamp(0.9rem,1.25vw,1.05rem)]";
 
 type AboutProps = { active: boolean };
 
@@ -38,14 +37,14 @@ export function About({ active }: AboutProps) {
           as="h2"
           id="about-heading"
           line={heading}
-          className="glitch text-[0.6rem] font-normal opacity-80 sm:text-[clamp(0.7rem,1vw,0.9rem)]"
+          className="text-[0.6rem] font-normal opacity-80 sm:text-[clamp(0.7rem,1vw,0.9rem)]"
         />
 
         {intro && (
           <TypedText
             as="p"
             line={intro}
-            className="glitch mt-4 text-[0.75rem] leading-relaxed sm:text-[clamp(0.9rem,1.25vw,1.05rem)]"
+            className="mt-4 text-[0.75rem] leading-relaxed sm:text-[clamp(0.9rem,1.25vw,1.05rem)]"
           />
         )}
 
@@ -74,7 +73,7 @@ export function About({ active }: AboutProps) {
               line={line}
               href={link.href}
               description={link.description}
-              className="glitch block text-[clamp(0.7rem,1vw,0.9rem)] transition-opacity duration-200 hover:opacity-50"
+              className="block text-[clamp(0.7rem,1vw,0.9rem)] transition-opacity duration-200 hover:opacity-50"
             />
           );
         })}

@@ -28,7 +28,7 @@ export function Projects({ active }: ProjectsProps) {
         as="h2"
         id="projects-heading"
         line={heading}
-        className="glitch mb-4 text-xs opacity-80 sm:mb-6 sm:text-sm"
+        className="mb-4 text-xs opacity-80 sm:mb-6 sm:text-sm"
       />
 
       {typed[1] && (
@@ -52,13 +52,13 @@ export function Projects({ active }: ProjectsProps) {
                   <TypedText
                     as="p"
                     line={meta}
-                    className="glitch mb-1 text-xs font-normal sm:text-sm"
+                    className="mb-1 text-xs font-normal opacity-80 sm:text-sm"
                   />
                   {title && (
                     <TypedText
                       as="p"
                       line={title}
-                      className="glitch whitespace-nowrap text-[clamp(1.25rem,5vw,3.5rem)] font-bold tracking-tight"
+                      className="whitespace-nowrap font-display text-[clamp(1.2rem,4.6vw,3.25rem)] font-bold tracking-[-0.02em]"
                     />
                   )}
                 </a>

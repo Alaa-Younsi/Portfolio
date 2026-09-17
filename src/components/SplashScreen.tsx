@@ -1,20 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { site } from "@/config/site";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
+import { useScramble } from "@/hooks/useScramble";
 
-const SPLASH_MS = 2500;
+/** Total curtain time; the fade-out is baked into `animate-splashOut`. */
+const SPLASH_MS = 2200;
 
-/** Intro curtain: the name fades out slightly before the word "Portfolio". */
-export function SplashScreen() {
+type SplashScreenProps = {
+  /** Fires once the curtain has lifted, so the page can start typing. */
+  onDone: () => void;
+};
+
+/**
+ * Intro curtain: the name decodes out of noise, the word PORTFOLIO surfaces
+ * beneath it, and a single hairline charges across — then the curtain fades
+ * and the frame draws itself in behind it.
+ */
+export function SplashScreen({ onDone }: SplashScreenProps) {
   const reducedMotion = usePrefersReducedMotion();
   const [visible, setVisible] = useState(!reducedMotion);
+  const onDoneRef = useRef(onDone);
+  useEffect(() => {
+    onDoneRef.current = onDone;
+  }, [onDone]);
+
+  const { display } = useScramble(site.name, { duration: 900, autoplay: !reducedMotion });
 
   useEffect(() => {
     if (reducedMotion) {
       setVisible(false);
+      onDoneRef.current();
       return;
     }
-    const id = setTimeout(() => setVisible(false), SPLASH_MS);
+    const id = setTimeout(() => {
+      setVisible(false);
+      onDoneRef.current();
+    }, SPLASH_MS);
     return () => clearTimeout(id);
   }, [reducedMotion]);
 
@@ -24,12 +45,26 @@ export function SplashScreen() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed inset-0 z-[999] flex items-center justify-center bg-bg"
+      className="fixed inset-0 z-[999] flex animate-splashOut items-center justify-center bg-bg"
     >
-      <p className="text-2xl font-bold text-fg">
-        <span className="animate-fadeOut">{site.name}</span>{" "}
-        <span className="animate-fadeOutSlow">Portfolio</span>
-      </p>
+      <div className="text-center">
+        <p className="font-display text-[clamp(1.6rem,5vw,3.2rem)] font-bold tracking-tight text-fg">
+          <span aria-hidden="true">{display || " "}</span>
+          <span className="sr-only">{site.name}</span>
+        </p>
+        <p
+          className="mt-3 animate-summon text-[0.65rem] uppercase tracking-[0.5em] text-fg opacity-70 [animation-delay:350ms] sm:text-xs"
+          aria-hidden="true"
+        >
+          Portfolio
+        </p>
+        <div
+          aria-hidden="true"
+          className="mx-auto mt-7 h-px w-[min(60vw,18rem)] overflow-hidden bg-fg/15"
+        >
+          <div className="h-full origin-left animate-splashLine bg-fg" />
+        </div>
+      </div>
     </div>
   );
 }

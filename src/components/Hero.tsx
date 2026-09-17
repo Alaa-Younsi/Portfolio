@@ -20,7 +20,7 @@ export function Hero({ active }: HeroProps) {
             key={line.full}
             as="p"
             line={line}
-            className="glitch text-[clamp(0.6rem,1vw,0.9rem)] leading-[1.2]"
+            className="text-[clamp(0.6rem,1vw,0.9rem)] leading-[1.2]"
           />
         ))}
       </div>
@@ -35,7 +35,7 @@ export function Hero({ active }: HeroProps) {
               line={line}
               href={link.href}
               description={link.description}
-              className="glitch block text-[clamp(0.7rem,1vw,0.9rem)] transition-opacity duration-200 hover:opacity-50"
+              className="block text-[clamp(0.7rem,1vw,0.9rem)] transition-opacity duration-200 hover:opacity-50"
             />
           );
         })}

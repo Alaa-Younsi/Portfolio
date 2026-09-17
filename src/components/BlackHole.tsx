@@ -2,8 +2,12 @@ import { useEffect, useRef } from "react";
 import { useIsCompact, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { type BlackHoleHandle, createBlackHole } from "@/lib/blackhole";
 
-const SIZE_DESKTOP = 300;
-const SIZE_COMPACT = 240;
+/**
+ * Canvas edge in CSS pixels. The design is identical on every device; only
+ * the number of pixels rendered behind it changes (see `blackhole-gl.ts`).
+ */
+const SIZE_DESKTOP = 600;
+const SIZE_COMPACT = 340;
 
 type BlackHoleProps = {
   exploding: boolean;
@@ -35,7 +39,7 @@ export function BlackHole({ exploding, onExplode }: BlackHoleProps) {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const handle = createBlackHole(canvas, size);
+    const handle = createBlackHole(canvas, size, { compact });
     handle.setReducedMotion(reducedMotionRef.current);
     handle.setExploding(explodingRef.current);
     handleRef.current = handle;
@@ -44,7 +48,7 @@ export function BlackHole({ exploding, onExplode }: BlackHoleProps) {
       handle.destroy();
       handleRef.current = null;
     };
-  }, [size]);
+  }, [size, compact]);
 
   const setHovered = (value: boolean) => handleRef.current?.setHovered(value);
 
@@ -57,13 +61,12 @@ export function BlackHole({ exploding, onExplode }: BlackHoleProps) {
       onFocus={() => setHovered(true)}
       onBlur={() => setHovered(false)}
       aria-label="Collapse the black hole"
-      className="fixed left-1/2 top-1/2 z-10 cursor-pointer"
+      disabled={exploding}
+      className="fixed left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2 animate-fadeIn cursor-pointer rounded-full transition-transform duration-500 ease-out"
       style={{
         width: `${size}px`,
         height: `${size}px`,
-        transform: `translate(-50%, -50%) scale(${exploding ? 1.15 : 1})`,
-        transition: "transform 300ms ease-out",
-        willChange: "transform",
+        transform: `translate(-50%, -50%) scale(${exploding ? 1.06 : 1})`,
       }}
     >
       <canvas ref={canvasRef} className="pointer-events-none block" />

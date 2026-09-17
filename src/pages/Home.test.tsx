@@ -1,5 +1,6 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { chronicle } from "@/data/biography";
 import { projects } from "@/data/projects";
 import { Home } from "./Home";
 
@@ -17,6 +18,10 @@ function stubReducedMotion(): void {
   }));
 }
 
+beforeEach(() => {
+  stubReducedMotion();
+});
+
 afterEach(() => {
   vi.unstubAllGlobals();
 });
@@ -32,7 +37,6 @@ describe("Home", () => {
   });
 
   it("lists every project with a safe external link", () => {
-    stubReducedMotion();
     render(<Home />);
 
     fireEvent.click(screen.getByRole("button", { name: "Navigate to Projects" }));
@@ -52,5 +56,21 @@ describe("Home", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Navigate to Contact" }));
     expect(document.title).toBe("Contact — Alaa Younsi");
+  });
+
+  it("reveals the biography when the black hole is collapsed", () => {
+    vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+    render(<Home />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Collapse the black hole" }));
+    act(() => void vi.advanceTimersByTime(1200));
+
+    expect(screen.getByRole("region", { name: "About Alaa Younsi" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: chronicle.title })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Restore the portfolio" }));
+    act(() => void vi.advanceTimersByTime(400));
+    expect(screen.queryByRole("region", { name: "About Alaa Younsi" })).toBeNull();
+    vi.useRealTimers();
   });
 });

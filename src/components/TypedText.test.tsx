@@ -5,23 +5,46 @@ import { TypedLink, TypedText } from "./TypedText";
 describe("TypedText", () => {
   it("renders nothing before the first character", () => {
     const { container } = render(
-      <TypedText line={{ text: "", full: "Hello", done: false }} as="p" />,
+      <TypedText line={{ text: "", full: "Hello", done: false, scramble: "" }} as="p" />,
     );
     expect(container).toBeEmptyDOMElement();
   });
 
+  it("materialises as soon as noise runs ahead of the caret", () => {
+    render(
+      <TypedText
+        line={{ text: "", full: "Hello", done: false, scramble: "#!" }}
+        as="p"
+        id="line"
+      />,
+    );
+    expect(document.getElementById("line")?.querySelector(".scramble")).toHaveTextContent("#!");
+  });
+
   it("shows a caret while typing and the whole sentence to screen readers", () => {
-    render(<TypedText line={{ text: "Hel", full: "Hello", done: false }} as="p" id="line" />);
+    render(
+      <TypedText
+        line={{ text: "Hel", full: "Hello", done: false, scramble: "" }}
+        as="p"
+        id="line"
+      />,
+    );
 
     const element = document.getElementById("line");
     expect(element).toHaveTextContent("Hel");
     expect(element).toHaveTextContent("Hello");
-    expect(element?.textContent).toContain("|");
+    expect(element?.querySelector(".caret")).not.toBeNull();
   });
 
   it("drops the caret once the line is finished", () => {
-    render(<TypedText line={{ text: "Hello", full: "Hello", done: true }} as="p" id="line" />);
-    expect(document.getElementById("line")?.textContent).not.toContain("|");
+    render(
+      <TypedText
+        line={{ text: "Hello", full: "Hello", done: true, scramble: "" }}
+        as="p"
+        id="line"
+      />,
+    );
+    expect(document.getElementById("line")?.querySelector(".caret")).toBeNull();
   });
 });
 
@@ -29,7 +52,7 @@ describe("TypedLink", () => {
   it("opens in a new tab without leaking the opener", () => {
     render(
       <TypedLink
-        line={{ text: "GitHub", full: "GitHub", done: true }}
+        line={{ text: "GitHub", full: "GitHub", done: true, scramble: "" }}
         href="https://example.com"
         description="Visit example (opens in a new tab)"
       />,
