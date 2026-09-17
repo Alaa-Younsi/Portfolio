@@ -8,7 +8,46 @@
 
 import { type Bounds, createCosmos, type Scene } from "./cosmos";
 
-type Star = { x: number; y: number; z: number; alpha: number };
+type Star = {
+  x: number;
+  y: number;
+  z: number;
+  alpha: number;
+  /** 0 = white, 1 = blue-white, 2 = warm. */
+  tint: number;
+  /** Twinkle phase; bright stars also get a glow sprite. */
+  phase: number;
+  bright: boolean;
+};
+
+type Meteor = { x: number; y: number; vx: number; vy: number; life: number; max: number };
+
+const TINTS = ["#ffffff", "#cfe1ff", "#ffe8c8"] as const;
+/** A soft glow with faint diffraction spikes, painted once and blitted. */
+function paintStarSprite(dpr: number): HTMLCanvasElement {
+  const size = Math.ceil(28 * dpr);
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return canvas;
+  const c = size / 2;
+  const glow = ctx.createRadialGradient(c, c, 0, c, c, c);
+  glow.addColorStop(0, "rgba(255,255,255,0.9)");
+  glow.addColorStop(0.18, "rgba(255,255,255,0.35)");
+  glow.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = glow;
+  ctx.fillRect(0, 0, size, size);
+  ctx.strokeStyle = "rgba(255,255,255,0.55)";
+  ctx.lineWidth = Math.max(1, dpr * 0.7);
+  ctx.beginPath();
+  ctx.moveTo(c, 0);
+  ctx.lineTo(c, size);
+  ctx.moveTo(0, c);
+  ctx.lineTo(size, c);
+  ctx.stroke();
+  return canvas;
+}
 
 const STAR_SIZE = 3;
 const STAR_MIN_SCALE = 0.2;
@@ -49,6 +88,10 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
   let stars: Star[] = [];
   let touchInput = false;
   let lastFrame = 0;
+  let time = 0;
+  let sprite: HTMLCanvasElement | null = null;
+  let nextMeteor = 4 + Math.random() * 6;
+  const meteors: Meteor[] = [];
   const cosmos = createCosmos(scene);
 
   const bounds = { top: 0, bottom: 1, left: 0, right: 1 };
@@ -73,12 +116,18 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
     const visibleHeight = window.innerHeight * (bounds.bottom - bounds.top);
     const count = Math.round((visibleWidth + visibleHeight) / STAR_DENSITY_DIVISOR);
 
-    stars = Array.from({ length: count }, () => ({
-      x: 0,
-      y: 0,
-      z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE),
-      alpha: 0.5 + 0.5 * Math.random(),
-    }));
+    stars = Array.from({ length: count }, () => {
+      const roll = Math.random();
+      return {
+        x: 0,
+        y: 0,
+        z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE),
+        alpha: 0.5 + 0.5 * Math.random(),
+        tint: roll < 0.2 ? 1 : roll < 0.32 ? 2 : 0,
+        phase: Math.random() * Math.PI * 2,
+        bright: Math.random() < 0.05,
+      };
+    });
   };
 
   /** Re-enters a star from whichever edge the pointer is travelling away from. */
@@ -139,7 +188,9 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
       bounds.right = (window.innerWidth - inset.x) / window.innerWidth;
     }
 
-    scale = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    const nextScale = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    if (nextScale !== scale || !sprite) sprite = paintStarSprite(nextScale);
+    scale = nextScale;
     width = window.innerWidth * scale;
     height = window.innerHeight * scale;
     canvas.width = width;
@@ -202,7 +253,6 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
     ctx.restore();
 
     ctx.lineCap = "round";
-    ctx.strokeStyle = "#fff";
 
     let tailX = velocity.x * 2;
     let tailY = velocity.y * 2;
@@ -210,11 +260,37 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
     if (Math.abs(tailY) < 0.1) tailY = 0.5;
 
     for (const star of stars) {
+      const twinkle = 0.78 + 0.22 * Math.sin(time * (1.4 + star.z * 2.2) + star.phase);
+      ctx.globalAlpha = star.alpha * twinkle;
+      ctx.strokeStyle = TINTS[star.tint] ?? "#fff";
       ctx.lineWidth = STAR_SIZE * star.z * scale;
-      ctx.globalAlpha = star.alpha;
       ctx.beginPath();
       ctx.moveTo(star.x, star.y);
       ctx.lineTo(star.x + tailX, star.y + tailY);
+      ctx.stroke();
+      if (star.bright && sprite) {
+        const size = (10 + 18 * star.z) * scale;
+        ctx.globalAlpha = star.alpha * twinkle * 0.9;
+        ctx.drawImage(sprite, star.x - size / 2, star.y - size / 2, size, size);
+      }
+    }
+
+    // Meteors: a bright head with a fading streak behind it.
+    for (const m of meteors) {
+      const t = m.life / m.max;
+      const fade = Math.sin(t * Math.PI);
+      const length = 90 * scale;
+      const nx = -m.vx / Math.hypot(m.vx, m.vy);
+      const ny = -m.vy / Math.hypot(m.vx, m.vy);
+      const gradient = ctx.createLinearGradient(m.x, m.y, m.x + nx * length, m.y + ny * length);
+      gradient.addColorStop(0, `rgba(255,255,255,${0.9 * fade})`);
+      gradient.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = 1.6 * scale;
+      ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.moveTo(m.x, m.y);
+      ctx.lineTo(m.x + nx * length, m.y + ny * length);
       ctx.stroke();
     }
 
@@ -231,7 +307,33 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
   const tick = (now: number): void => {
     const dt = lastFrame === 0 ? 0 : Math.min((now - lastFrame) / 1000, 0.05);
     lastFrame = now;
+    time += dt;
     const { left, right, top, bottom } = edges();
+
+    if (!reducedMotion) {
+      nextMeteor -= dt;
+      if (nextMeteor <= 0) {
+        nextMeteor = 7 + Math.random() * 12;
+        const angle = Math.PI * (0.15 + Math.random() * 0.25);
+        const speed = (900 + Math.random() * 500) * scale;
+        meteors.push({
+          x: left + Math.random() * (right - left) * 0.8,
+          y: top + Math.random() * (bottom - top) * 0.3,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          life: 0,
+          max: 0.5 + Math.random() * 0.3,
+        });
+      }
+      for (let i = meteors.length - 1; i >= 0; i--) {
+        const m = meteors[i];
+        if (!m) continue;
+        m.life += dt;
+        m.x += m.vx * dt;
+        m.y += m.vy * dt;
+        if (m.life >= m.max) meteors.splice(i, 1);
+      }
+    }
     cosmos.update(
       dt,
       { left: left / scale, top: top / scale, right: right / scale, bottom: bottom / scale },
@@ -240,10 +342,19 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
     );
   };
 
+  let faulted = false;
   const step = (now: number): void => {
-    tick(now);
-    update();
-    render();
+    try {
+      tick(now);
+      update();
+      render();
+    } catch (error) {
+      // One bad frame must not leave the sky blank; report once and carry on.
+      if (!faulted) {
+        faulted = true;
+        console.warn("StarField frame failed", error);
+      }
+    }
     frameId = requestAnimationFrame(step);
   };
 
@@ -297,8 +408,13 @@ export function createStarField(canvas: HTMLCanvasElement, scene: Scene = "home"
     if (resizeId !== null) cancelAnimationFrame(resizeId);
     resizeId = requestAnimationFrame(() => {
       resizeId = null;
-      resize();
-      if (reducedMotion) render();
+      // Star count follows the visible area, so a narrow window is not
+      // left with a desktop's worth of stars crammed into it.
+      rebuild();
+      if (reducedMotion) {
+        tick(performance.now());
+        render();
+      }
     });
   };
 

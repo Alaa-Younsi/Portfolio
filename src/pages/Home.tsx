@@ -55,7 +55,7 @@ export function Home() {
   const onSplashDone = useCallback(() => setReady(true), []);
 
   return (
-    <main className="h-full overflow-hidden bg-bg text-fg">
+    <main className="h-full overflow-clip bg-bg text-fg">
       <StarField fullScreen={collapsed} scene={phase === "collapsed" ? "chronicle" : "home"} />
       {ready && <Frame hidden={collapsed} />}
       <SplashScreen onDone={onSplashDone} />

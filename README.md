@@ -174,13 +174,23 @@ border.
 
 ### Cosmos — `src/lib/cosmos.ts`
 
-Planets are painted once into offscreen bitmaps — a lit hemisphere, latitude
-bands, a terminator shadow, a rim light, ring systems split into the half
-behind the body and the half in front — and blitted every frame. Ships are
-line-art silhouettes filled black so they occlude the stars, with a gradient
-engine trail and a blinking navigation light. The pointer nudges planets with
-bounded parallax that relaxes back to rest; ships wrap around the frame. The
-two scenes cross-fade when the black hole collapses.
+Planets are shaded **per pixel** into offscreen bitmaps, once per size: a
+sphere normal for every pixel, a procedural surface sampled by latitude and
+longitude (banded gas giants with a storm, cratered rock, fractured ice with a
+glossy highlight), wrap lighting from the black hole with a soft terminator,
+limb darkening, an atmospheric rim and halo, and ring systems with bands and a
+Cassini gap that pass behind the body, cross in front of it, and receive the
+planet's shadow. Bitmaps are painted one per frame across idle time, capped at
+230 device pixels of radius, and blitted every frame.
+
+Ships are vector hulls — an interceptor with swept wings and a canopy, a
+hauler with cargo modules, an angular corvette, a probe with a dish, and a
+rotating torus station with solar arrays — filled with a gradient lit from the
+black hole, with panel lines, engine glow, tapered trails and blinking lights.
+The pointer nudges planets with bounded parallax; ships wrap around the frame.
+Stars carry a colour tint, twinkle, and the brightest wear a glow sprite with
+diffraction spikes; a meteor crosses the sky every ten seconds or so. The two
+scenes cross-fade when the black hole collapses.
 
 ### Black hole — `src/lib/blackhole-gl.ts` + `blackhole.glsl.ts`
 

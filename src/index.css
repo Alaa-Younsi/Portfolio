@@ -52,7 +52,9 @@
   body,
   #root {
     height: 100%;
-    overflow: hidden;
+    /* clip, not hidden: nothing here is a scroll container, so no element
+       can ever be scrolled or zoomed out of place by overflowing content. */
+    overflow: clip;
   }
 
   body {
@@ -85,6 +87,8 @@
   .glitch {
     position: relative;
     display: inline-block;
+    /* The colour layers may tear past the box; they must never widen the page. */
+    contain: paint;
   }
 
   .glitch::before,
@@ -94,7 +98,6 @@
     inset: 0;
     opacity: 0;
     pointer-events: none;
-    white-space: nowrap;
   }
 
   .glitch::before {

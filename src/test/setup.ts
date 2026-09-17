@@ -23,6 +23,13 @@ const context = new Proxy(store, {
       return () => gradient;
     }
     if (prop === "measureText") return () => ({ width: 0 });
+    if (prop === "createImageData") {
+      return (w: number, h: number) => ({
+        width: w,
+        height: h,
+        data: new Uint8ClampedArray(w * h * 4),
+      });
+    }
     if (prop === "getImageData") return () => ({ data: new Uint8ClampedArray(4) });
     return noop;
   },
