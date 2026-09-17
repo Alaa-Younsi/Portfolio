@@ -2,15 +2,132 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/src/assets/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Alaa Younsi</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Source+Code+Pro:wght@300;400;500;600&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <title>Alaa Younsi — Developer &amp; Designer</title>
+    <meta
+      name="description"
+      content="Alaa Younsi is a developer and designer specializing in website development, design, and server-side services. Explore creative projects and innovative digital solutions."
+    />
+    <link rel="canonical" href="https://alaa-younsi.vercel.app/" />
+    <meta name="author" content="Alaa Younsi" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="keywords"
+      content="Alaa Younsi, web developer, frontend developer, full-stack developer, UI/UX designer, React, TypeScript, portfolio, Algeria"
+    />
+
+    <!-- Social cards. Crawlers do not run JavaScript, so every tag is static. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Alaa Younsi Portfolio" />
+    <meta property="og:title" content="Alaa Younsi — Problem Solving Enjoyer" />
+    <meta
+      property="og:description"
+      content="Developer and designer building creative, hand-coded web experiences. Website development, design, and server-side services."
+    />
+    <meta property="og:url" content="https://alaa-younsi.vercel.app/" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="https://alaa-younsi.vercel.app/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Alaa Younsi — Problem Solving Enjoyer, framed over a black hole and a field of stars"
+    />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Alaa Younsi — Problem Solving Enjoyer" />
+    <meta
+      name="twitter:description"
+      content="Developer and designer building creative, hand-coded web experiences."
+    />
+    <meta name="twitter:image" content="https://alaa-younsi.vercel.app/og-image.png" />
+    <meta name="twitter:creator" content="@ashv3il" />
+    <meta name="twitter:site" content="@ashv3il" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/icon-192.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <!-- The only render-blocking asset on the page. -->
+    <link
+      rel="preload"
+      href="/fonts/jetbrains-mono-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://alaa-younsi.vercel.app/#person",
+            "name": "Alaa Younsi",
+            "url": "https://alaa-younsi.vercel.app/",
+            "image": "https://alaa-younsi.vercel.app/icon-512.png",
+            "jobTitle": "Full-Stack Developer & UI/UX Designer",
+            "description": "Developer and designer specializing in website development, design, and server-side services.",
+            "birthPlace": "Skikda, Algeria",
+            "knowsAbout": [
+              "Web Development",
+              "React",
+              "TypeScript",
+              "UI/UX Design",
+              "Automation",
+              "Linux",
+              "Networking",
+              "Security"
+            ],
+            "sameAs": [
+              "https://github.com/Alaa-Younsi",
+              "https://leetcode.com/u/alaa-younsi/",
+              "https://www.instagram.com/ashv3il/",
+              "https://x.com/ashv3il",
+              "https://linktr.ee/ashv3il"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://alaa-younsi.vercel.app/#website",
+            "url": "https://alaa-younsi.vercel.app/",
+            "name": "Alaa Younsi Portfolio",
+            "inLanguage": "en",
+            "author": { "@id": "https://alaa-younsi.vercel.app/#person" },
+            "publisher": { "@id": "https://alaa-younsi.vercel.app/#person" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+
+    <noscript>
+      <style>
+        body { padding: 2rem; color: #fff; background: #000; overflow: auto; height: auto; }
+        noscript a { color: #fff; }
+      </style>
+      <h1>Alaa Younsi</h1>
+      <p>Problem Solving Enjoyer — developer and designer.</p>
+      <p>
+        This portfolio is an interactive canvas experience and needs JavaScript. You can still reach
+        me here:
+      </p>
+      <ul>
+        <li><a href="https://github.com/Alaa-Younsi">GitHub</a></li>
+        <li><a href="https://leetcode.com/u/alaa-younsi/">LeetCode</a></li>
+        <li><a href="https://www.instagram.com/ashv3il/">Instagram</a></li>
+        <li><a href="https://x.com/ashv3il">X</a></li>
+        <li><a href="https://linktr.ee/ashv3il">Contact</a></li>
+      </ul>
+    </noscript>
+
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

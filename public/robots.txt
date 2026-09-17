@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
 
+# Keep the raw font binary out of the index; it has no standalone value.
+Disallow: /fonts/
+
 Sitemap: https://alaa-younsi.vercel.app/sitemap.xml

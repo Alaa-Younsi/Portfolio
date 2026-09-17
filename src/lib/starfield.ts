@@ -1,0 +1,314 @@
+/**
+ * Pointer-reactive star field, framed to the white border of the layout.
+ *
+ * Kept deliberately free of React: the simulation owns its canvas, its
+ * listeners and its animation frame, and exposes a tiny imperative handle.
+ * That keeps per-frame work out of the React render path entirely.
+ */
+
+type Star = { x: number; y: number; z: number; alpha: number };
+
+const STAR_SIZE = 3;
+const STAR_MIN_SCALE = 0.2;
+const OVERFLOW_THRESHOLD = 50;
+/** Rendering above 2x is invisible to the eye and costs 2.25x the fill rate. */
+const MAX_DPR = 2;
+const FRICTION = 0.96;
+const EASE = 0.8;
+const DRIFT = 0.0005;
+const STAR_DENSITY_DIVISOR = 8;
+
+export type StarFieldHandle = {
+  setFullScreen: (value: boolean) => void;
+  setReducedMotion: (value: boolean) => void;
+  destroy: () => void;
+};
+
+/** Mirrors `--frame-x` / `--frame-y` from `src/index.css`. */
+function frameInset(): { x: number; y: number } {
+  return {
+    x: Math.max(12, Math.min(window.innerWidth * 0.025, 32)),
+    y: Math.max(16, Math.min(window.innerHeight * 0.05, 48)),
+  };
+}
+
+export function createStarField(canvas: HTMLCanvasElement): StarFieldHandle {
+  const ctx = canvas.getContext("2d", { alpha: false });
+  if (!ctx) throw new Error("StarField: 2D context unavailable");
+
+  let width = 0;
+  let height = 0;
+  let scale = 1;
+  let fullScreen = false;
+  let reducedMotion = false;
+  let frameId: number | null = null;
+  let resizeId: number | null = null;
+  let stars: Star[] = [];
+  let touchInput = false;
+
+  const bounds = { top: 0, bottom: 1, left: 0, right: 1 };
+  const velocity = { x: 0, y: 0, tx: 0, ty: 0 };
+  const pointer: { x: number | null; y: number | null } = { x: null, y: null };
+
+  const edges = () => ({
+    left: width * bounds.left,
+    right: width * bounds.right,
+    top: height * bounds.top,
+    bottom: height * bounds.bottom,
+  });
+
+  const placeStar = (star: Star): void => {
+    const { left, right, top, bottom } = edges();
+    star.x = left + Math.random() * (right - left);
+    star.y = top + Math.random() * (bottom - top);
+  };
+
+  const generateStars = (): void => {
+    const visibleWidth = window.innerWidth * (bounds.right - bounds.left);
+    const visibleHeight = window.innerHeight * (bounds.bottom - bounds.top);
+    const count = Math.round((visibleWidth + visibleHeight) / STAR_DENSITY_DIVISOR);
+
+    stars = Array.from({ length: count }, () => ({
+      x: 0,
+      y: 0,
+      z: STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE),
+      alpha: 0.5 + 0.5 * Math.random(),
+    }));
+  };
+
+  /** Re-enters a star from whichever edge the pointer is travelling away from. */
+  const recycleStar = (star: Star): void => {
+    const vx = Math.abs(velocity.x);
+    const vy = Math.abs(velocity.y);
+    let direction: "z" | "l" | "r" | "t" | "b" = "z";
+
+    if (vx > 1 || vy > 1) {
+      const horizontal =
+        vx > vy ? Math.random() < vx / (vx + vy) : !(Math.random() < vy / (vx + vy));
+      direction = horizontal ? (velocity.x > 0 ? "l" : "r") : velocity.y > 0 ? "t" : "b";
+    }
+
+    star.z = STAR_MIN_SCALE + Math.random() * (1 - STAR_MIN_SCALE);
+    star.alpha = 0.5 + 0.5 * Math.random();
+
+    const { left, right, top, bottom } = edges();
+    const frameWidth = right - left;
+    const frameHeight = bottom - top;
+
+    switch (direction) {
+      case "z":
+        star.z = 0.1;
+        star.x = left + Math.random() * frameWidth;
+        star.y = top + Math.random() * frameHeight;
+        break;
+      case "l":
+        star.x = left - OVERFLOW_THRESHOLD;
+        star.y = top + Math.random() * frameHeight;
+        break;
+      case "r":
+        star.x = right + OVERFLOW_THRESHOLD;
+        star.y = top + Math.random() * frameHeight;
+        break;
+      case "t":
+        star.x = left + Math.random() * frameWidth;
+        star.y = top - OVERFLOW_THRESHOLD;
+        break;
+      case "b":
+        star.x = left + Math.random() * frameWidth;
+        star.y = bottom + OVERFLOW_THRESHOLD;
+        break;
+    }
+  };
+
+  const resize = (): void => {
+    if (fullScreen) {
+      bounds.top = 0;
+      bounds.bottom = 1;
+      bounds.left = 0;
+      bounds.right = 1;
+    } else {
+      const inset = frameInset();
+      bounds.top = inset.y / window.innerHeight;
+      bounds.bottom = (window.innerHeight - inset.y) / window.innerHeight;
+      bounds.left = inset.x / window.innerWidth;
+      bounds.right = (window.innerWidth - inset.x) / window.innerWidth;
+    }
+
+    scale = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+    width = window.innerWidth * scale;
+    height = window.innerHeight * scale;
+    canvas.width = width;
+    canvas.height = height;
+
+    for (const star of stars) placeStar(star);
+  };
+
+  const update = (): void => {
+    velocity.tx *= FRICTION;
+    velocity.ty *= FRICTION;
+    velocity.x += (velocity.tx - velocity.x) * EASE;
+    velocity.y += (velocity.ty - velocity.y) * EASE;
+
+    const { left, right, top, bottom } = edges();
+    const centerX = left + (right - left) / 2;
+    const centerY = top + (bottom - top) / 2;
+
+    for (const star of stars) {
+      star.x += velocity.x * star.z;
+      star.y += velocity.y * star.z;
+      star.x += (star.x - centerX) * DRIFT * star.z;
+      star.y += (star.y - centerY) * DRIFT * star.z;
+      star.z += DRIFT;
+
+      if (
+        star.x < left - OVERFLOW_THRESHOLD ||
+        star.x > right + OVERFLOW_THRESHOLD ||
+        star.y < top - OVERFLOW_THRESHOLD ||
+        star.y > bottom + OVERFLOW_THRESHOLD
+      ) {
+        recycleStar(star);
+      }
+    }
+  };
+
+  const render = (): void => {
+    ctx.fillStyle = "#000";
+    ctx.fillRect(0, 0, width, height);
+
+    // Inset by one CSS pixel so no star bleeds over the frame line.
+    const { left, right, top, bottom } = edges();
+    const inset = scale;
+
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(left + inset, top + inset, right - left - inset * 2, bottom - top - inset * 2);
+    ctx.clip();
+
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#fff";
+
+    let tailX = velocity.x * 2;
+    let tailY = velocity.y * 2;
+    if (Math.abs(tailX) < 0.1) tailX = 0.5;
+    if (Math.abs(tailY) < 0.1) tailY = 0.5;
+
+    for (const star of stars) {
+      ctx.lineWidth = STAR_SIZE * star.z * scale;
+      ctx.globalAlpha = star.alpha;
+      ctx.beginPath();
+      ctx.moveTo(star.x, star.y);
+      ctx.lineTo(star.x + tailX, star.y + tailY);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  };
+
+  const step = (): void => {
+    update();
+    render();
+    frameId = requestAnimationFrame(step);
+  };
+
+  const play = (): void => {
+    if (frameId !== null) return;
+    if (reducedMotion) {
+      render();
+      return;
+    }
+    frameId = requestAnimationFrame(step);
+  };
+
+  const pause = (): void => {
+    if (frameId === null) return;
+    cancelAnimationFrame(frameId);
+    frameId = null;
+  };
+
+  const movePointer = (x: number, y: number): void => {
+    if (pointer.x !== null && pointer.y !== null) {
+      const sign = touchInput ? 1 : -1;
+      velocity.tx += ((x - pointer.x) / 8) * scale * sign;
+      velocity.ty += ((y - pointer.y) / 8) * scale * sign;
+    }
+    pointer.x = x;
+    pointer.y = y;
+  };
+
+  const onMouseMove = (event: MouseEvent): void => {
+    touchInput = false;
+    movePointer(event.clientX, event.clientY);
+  };
+
+  const onTouchMove = (event: TouchEvent): void => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    touchInput = true;
+    // Never preventDefault here: a non-passive touchmove on document kills
+    // native scrolling inside every child container on mobile browsers.
+    movePointer(touch.clientX, touch.clientY);
+  };
+
+  const onPointerLeave = (): void => {
+    pointer.x = null;
+    pointer.y = null;
+  };
+
+  const onResize = (): void => {
+    if (resizeId !== null) cancelAnimationFrame(resizeId);
+    resizeId = requestAnimationFrame(() => {
+      resizeId = null;
+      resize();
+      if (reducedMotion) render();
+    });
+  };
+
+  /** A hidden tab must not burn a frame budget it cannot paint. */
+  const onVisibilityChange = (): void => {
+    if (document.hidden) pause();
+    else play();
+  };
+
+  /** Bounds first, then a star count sized to the area they enclose. */
+  const rebuild = (): void => {
+    resize();
+    generateStars();
+    for (const star of stars) placeStar(star);
+  };
+
+  rebuild();
+  play();
+
+  window.addEventListener("resize", onResize);
+  document.addEventListener("mousemove", onMouseMove, { passive: true });
+  document.addEventListener("touchmove", onTouchMove, { passive: true });
+  document.addEventListener("touchend", onPointerLeave, { passive: true });
+  document.addEventListener("mouseleave", onPointerLeave);
+  document.addEventListener("visibilitychange", onVisibilityChange);
+
+  return {
+    setFullScreen(value) {
+      if (fullScreen === value) return;
+      fullScreen = value;
+      rebuild();
+      if (reducedMotion) render();
+    },
+    setReducedMotion(value) {
+      if (reducedMotion === value) return;
+      reducedMotion = value;
+      pause();
+      play();
+    },
+    destroy() {
+      pause();
+      if (resizeId !== null) cancelAnimationFrame(resizeId);
+      window.removeEventListener("resize", onResize);
+      document.removeEventListener("mousemove", onMouseMove);
+      document.removeEventListener("touchmove", onTouchMove);
+      document.removeEventListener("touchend", onPointerLeave);
+      document.removeEventListener("mouseleave", onPointerLeave);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+    },
+  };
+}
