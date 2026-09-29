@@ -10,6 +10,8 @@ export type Project = {
  * at the foot of the list.
  */
 export const projects: readonly Project[] = [
+  { meta: "Commission / Store", title: "Mat Enseigne", url: "https://mat-enseigne.vercel.app/" },
+  { meta: "Commission / Company", title: "Veltron", url: "https://veltrontrading.com/en" },
   { meta: "Commission / Online Shop", title: "Jazym", url: "https://jazym.vercel.app/" },
   { meta: "Commission / Private Driver", title: "The Driver", url: "https://thedriver.fr/" },
   { meta: "Commission / Company", title: "Norlyn Coffee", url: "https://www.norlyncoffee.com/" },

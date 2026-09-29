@@ -49,7 +49,7 @@ export const chronicle: Chronicle = {
       paragraphs: [
         "Software engineering and AI systems: full-stack web development, AI agents and SaaS products, automation, Linux, networking, and security. I am at home from the first pixel to the last packet.",
         "Design, content and growth: UI/UX design, visual content creation, and performance-driven digital marketing for products and brands. Building something is half the job. Making sure it is seen and understood is the other half.",
-        "Most of my work is commissioned, and delivered end to end: online shops for Northernwest, Auto Style, Laroche, Kindo and Jazym; company sites for Afia Export, Amana Partners, HIS & HVAC and Norlyn Coffee; a ceramic-surface store for Arcada; a parts and repair workshop for GSM Auto; a booking platform for a private driver in Paris. Each one is live, and each one taught me something the last one could not.",
+        "Most of my work is commissioned, and delivered end to end: online shops for Northernwest, Auto Style, Laroche, Kindo and Jazym; company sites for Afia Export, Amana Partners, HIS & HVAC, Norlyn Coffee and Veltron; storefronts for Arcada's ceramic surfaces and Mat Enseigne's Paris signage; a parts and repair workshop for GSM Auto; a booking platform for a private driver. Each one is live, and each one taught me something the last one could not.",
       ],
     },
     {
