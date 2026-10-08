@@ -144,6 +144,7 @@ export function createBlackHoleGL(
   let frameInterval = 0;
   let sinceAdjust = 0;
   let lost = false;
+  let active = true;
 
   const draw = (now: number): void => {
     const dt = last === 0 ? 0 : clamp((now - last) / 1000, 0, 0.05);
@@ -196,7 +197,7 @@ export function createBlackHoleGL(
   };
 
   const play = (): void => {
-    if (frameId !== null || lost) return;
+    if (frameId !== null || lost || !active) return;
     last = 0;
     if (reducedMotion && !exploding) {
       draw(performance.now());
@@ -243,6 +244,12 @@ export function createBlackHoleGL(
       reducedMotion = value;
       pause();
       play();
+    },
+    setActive(value) {
+      if (active === value) return;
+      active = value;
+      if (value) play();
+      else pause();
     },
     destroy() {
       pause();

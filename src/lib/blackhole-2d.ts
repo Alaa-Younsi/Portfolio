@@ -46,6 +46,8 @@ export type BlackHoleHandle = {
   setHovered: (value: boolean) => void;
   setExploding: (value: boolean) => void;
   setReducedMotion: (value: boolean) => void;
+  /** Hidden but kept alive: stops drawing without giving up the context. */
+  setActive: (value: boolean) => void;
   destroy: () => void;
 };
 
@@ -104,6 +106,7 @@ export function createBlackHole2D(canvas: HTMLCanvasElement, size: number): Blac
   let explosionStart = 0;
   let frame = 0;
   let frameId: number | null = null;
+  let active = true;
 
   // Radial gradients are expensive to build; they only change when hover does.
   const horizonGradient = ctx.createRadialGradient(
@@ -243,7 +246,7 @@ export function createBlackHole2D(canvas: HTMLCanvasElement, size: number): Blac
   };
 
   const play = (): void => {
-    if (frameId !== null) return;
+    if (frameId !== null || !active) return;
     // A still black hole still needs one paint; it just never needs a second.
     if (reducedMotion && !exploding) {
       draw();
@@ -315,6 +318,12 @@ export function createBlackHole2D(canvas: HTMLCanvasElement, size: number): Blac
       if (reducedMotion === value) return;
       reducedMotion = value;
       restart();
+    },
+    setActive(value) {
+      if (active === value) return;
+      active = value;
+      if (value) play();
+      else pause();
     },
     destroy() {
       pause();

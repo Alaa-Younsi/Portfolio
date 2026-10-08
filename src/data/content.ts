@@ -26,21 +26,12 @@ export const heroLines = [
 ] as const;
 
 export const heroLinks: readonly ExternalLink[] = [
-  {
-    label: "DeadSide\u2197",
-    href: "https://deadside-blog.vercel.app/",
-    description: "Visit DeadSide (opens in a new tab)",
-  },
-  {
-    label: "SingularityLab\u2197",
-    href: "https://singularity-lab-ruddy.vercel.app/",
-    description: "Visit SingularityLab (opens in a new tab)",
-  },
-  {
-    label: "Marlowe\u2197",
-    href: "https://marlowe-newspapers.vercel.app/",
-    description: "Visit Marlowe (opens in a new tab)",
-  },
+  // Hidden for now \u2014 uncomment to bring DeadSide back.
+  // {
+  //   label: "DeadSide\u2197",
+  //   href: "https://deadside-blog.vercel.app/",
+  //   description: "Visit DeadSide (opens in a new tab)",
+  // },
 ] as const;
 
 export const about = {
@@ -62,11 +53,12 @@ export const about = {
       href: socials.github,
       description: "Visit the GitHub profile of Alaa Younsi (opens in a new tab)",
     },
-    {
-      label: "LeetCode\u2197",
-      href: socials.leetcode,
-      description: "Visit the LeetCode profile of Alaa Younsi (opens in a new tab)",
-    },
+    // Hidden for now \u2014 uncomment to bring LeetCode back.
+    // {
+    //   label: "LeetCode\u2197",
+    //   href: socials.leetcode,
+    //   description: "Visit the LeetCode profile of Alaa Younsi (opens in a new tab)",
+    // },
   ],
 } as const satisfies {
   heading: string;

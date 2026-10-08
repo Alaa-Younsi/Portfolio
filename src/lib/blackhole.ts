@@ -23,6 +23,12 @@ export function createBlackHole(
   } catch (error) {
     // A canvas with no usable context must never take the page down with it.
     console.warn("BlackHole: rendering unavailable", error);
-    return { setHovered() {}, setExploding() {}, setReducedMotion() {}, destroy() {} };
+    return {
+      setHovered() {},
+      setExploding() {},
+      setReducedMotion() {},
+      setActive() {},
+      destroy() {},
+    };
   }
 }

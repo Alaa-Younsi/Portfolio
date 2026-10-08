@@ -91,9 +91,11 @@ export function Home() {
         </div>
       )}
 
-      {active === "home" && phase !== "collapsed" && (
-        <BlackHole exploding={phase === "collapsing"} onExplode={() => setPhase("collapsing")} />
-      )}
+      <BlackHole
+        visible={active === "home" && phase !== "collapsed"}
+        exploding={phase === "collapsing"}
+        onExplode={() => setPhase("collapsing")}
+      />
     </main>
   );
 }

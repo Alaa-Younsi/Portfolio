@@ -44,7 +44,7 @@ function Figure({ image, index }: { image: ChronicleImage; index: number }) {
     <figure
       data-reveal
       style={style}
-      className={`my-8 w-full sm:my-4 sm:[width:var(--w)] sm:[margin-top:var(--drop)] sm:[transform:rotate(var(--tilt))] ${float}`}
+      className={`my-8 w-full sm:clear-both sm:my-4 sm:[width:var(--w)] sm:[margin-top:var(--drop)] sm:[transform:rotate(var(--tilt))] ${float}`}
     >
       <div className="border border-line/50 p-1">
         <img
@@ -78,7 +78,7 @@ export function Chronicle({ leaving }: ChronicleProps) {
   const rootRef = useRef<HTMLElement>(null);
   useReveal(rootRef);
 
-  // Interleave images after every second paragraph, in order.
+  // One image ahead of every paragraph after the first, in order.
   const images = [...chronicle.images];
   let paragraphIndex = 0;
   let imageIndex = 0;
@@ -109,7 +109,7 @@ export function Chronicle({ leaving }: ChronicleProps) {
               </h2>
             )}
             {section.paragraphs.map((paragraph) => {
-              const image = paragraphIndex % 2 === 1 ? images[imageIndex] : undefined;
+              const image = paragraphIndex > 0 ? images[imageIndex] : undefined;
               const figureIndex = imageIndex;
               if (image) imageIndex += 1;
               paragraphIndex += 1;
