@@ -74,9 +74,6 @@ export default {
         // The frame drawing itself in after the splash.
         drawX: "drawX 0.8s cubic-bezier(0.22, 1, 0.36, 1) both",
         drawY: "drawY 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both",
-        // Splash name: a glyph landing once its ASCII code has been consumed.
-        bitLand: "bitLand 0.32s ease-out both",
-        splashLine: "splashLine 1.7s cubic-bezier(0.65, 0, 0.35, 1) both",
         splashOut: "fadeOut 0.35s ease-in 1.85s both",
         // Signal-interference glitch, triggered in bursts by JS.
         glitchA: "glitchA 0.55s steps(1, end) both",
@@ -96,15 +93,6 @@ export default {
         },
         drawX: { from: { transform: "scaleX(0)" }, to: { transform: "scaleX(1)" } },
         drawY: { from: { transform: "scaleY(0)" }, to: { transform: "scaleY(1)" } },
-        // A decoded glyph lands with a brief split into the glitch pair.
-        bitLand: {
-          from: {
-            textShadow: "0.08em 0 0 var(--glitch-a), -0.08em 0 0 var(--glitch-b)",
-            opacity: "0.4",
-          },
-          to: { textShadow: "0 0 0 transparent, 0 0 0 transparent", opacity: "1" },
-        },
-        splashLine: { from: { transform: "scaleX(0)" }, to: { transform: "scaleX(1)" } },
         // Horizontal slices of the two colour layers tear away from the text
         // and snap back. The base layer twitches by a pixel or two.
         glitchA: {
