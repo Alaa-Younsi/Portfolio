@@ -24,7 +24,6 @@ export const projects: readonly Project[] = [
     title: "Amana Partners",
     url: "https://www.amanapartnersllc.com/",
   },
-  { meta: "Commission / Online Shop", title: "Auto Style", url: "https://auto-style.shop/" },
   { meta: "Commission / Online Shop", title: "Northernwest", url: "https://northern-west.shop/" },
   { meta: "Commission / Store", title: "Arcada", url: "https://www.arcadatile.com/" },
   { meta: "Commission / Company", title: "Afia Export", url: "https://www.afiaexport.com/" },

@@ -52,7 +52,7 @@ describe("Home", () => {
 
   it("keeps the document title in sync with the active section", () => {
     render(<Home />);
-    expect(document.title).toBe("Alaa Younsi — Developer & Designer");
+    expect(document.title).toBe("Alaa Younsi — Portfolio");
 
     fireEvent.click(screen.getByRole("button", { name: "Navigate to Contact" }));
     expect(document.title).toBe("Contact — Alaa Younsi");

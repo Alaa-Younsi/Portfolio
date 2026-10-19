@@ -37,7 +37,7 @@ export const SECTION_LABELS: Record<Section, string> = {
 
 /** Per-section document titles — keeps deep links and browser history readable. */
 export const SECTION_TITLES: Record<Section, string> = {
-  home: `${site.name} — ${site.role}`,
+  home: `${site.name} — Portfolio`,
   projects: `Projects — ${site.name}`,
   info: `Info — ${site.name}`,
   contact: `Contact — ${site.name}`,
